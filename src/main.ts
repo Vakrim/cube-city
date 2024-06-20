@@ -12,7 +12,7 @@ import {
 } from "three";
 import "./style.css";
 import { cellMaterial } from "./materials/cellMaterial";
-import { createCamera } from "./camera";
+import { createCamera } from "./GameCamera";
 import { renderer } from "./renderer";
 
 class World {
@@ -59,10 +59,7 @@ function main() {
 
   // Handle window resize
   window.addEventListener("resize", () => {
-    const aspectRatio = window.innerWidth / window.innerHeight;
-    camera.left = -cameraSize * aspectRatio;
-    camera.right = cameraSize * aspectRatio;
-    camera.updateProjectionMatrix();
+
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 }
