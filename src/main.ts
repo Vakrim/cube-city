@@ -1,56 +1,38 @@
-import {
-  DoubleSide,
-  Mesh,
-  MeshBasicMaterial,
-  NearestFilter,
-  OrthographicCamera,
-  PlaneGeometry,
-  RepeatWrapping,
-  Scene,
-  TextureLoader,
-  WebGLRenderer,
-} from "three";
 import "./style.css";
-import { cellMaterial } from "./materials/cellMaterial";
-import { createCamera } from "./GameCamera";
 import { renderer } from "./renderer";
-
-class World {
-  scene = new Scene();
-
-  createFloor() {
-    const planeGeometry = new PlaneGeometry(50, 50);
-
-    const floor = new Mesh(planeGeometry, cellMaterial);
-    floor.rotation.x = -Math.PI / 2;
-
-    this.scene.add(floor);
-  }
-}
+import { WorldMapRenderer } from "./WorldMapRenderer";
+import { WORLD_MAP_SIZE, WorldMap } from "./WorldMap";
+import { GameCamera } from "./GameCamera";
+import { MapControls } from "three/examples/jsm/Addons.js";
+import { World } from "./World";
+import { generatePilar } from "./generatePilar";
+import { BlockType } from "./Block";
 
 function main() {
   const world = new World();
 
-  const camera = createCamera();
+  world.createFloor();
+  world.createLight();
 
-  // Create the orthographic camera
+  const camera = new GameCamera();
 
-  // Create the renderer
+  const gameMapRenderer = new WorldMapRenderer(world.scene);
 
-  // Load the texture
+  const gameMap = new WorldMap(gameMapRenderer);
 
-  // cellTexture.minFilter = NearestFilter;
+  gameMap.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
+  gameMap.setBlock({ x: WORLD_MAP_SIZE - 1, y: 0, z: 0 }, { type: BlockType.Rock });
+  gameMap.setBlock({ x: 0, y: 0, z: WORLD_MAP_SIZE - 1 }, { type: BlockType.Rock });
+  gameMap.setBlock({ x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 }, { type: BlockType.Rock });
 
-  // Create a plane geometry and a basic material with the texture
-  const wallGeometry = new PlaneGeometry(1, 1);
+  generatePilar(5, 5, 3, 20, gameMap);
 
-  // Create the plane mesh and add it to the scene
-  const wall = new Mesh(wallGeometry, tileMaterial);
-  wall.position.set(0, 0.5, 0);
-  scene.add(wall);
+  generatePilar(13, 5, 4, 16, gameMap);
+
+  const controls = new MapControls(camera.camera, renderer.domElement);
 
   function render() {
-    renderer.render(world.scene, camera);
+    renderer.render(world.scene, camera.camera);
 
     requestAnimationFrame(render);
   }
@@ -59,7 +41,6 @@ function main() {
 
   // Handle window resize
   window.addEventListener("resize", () => {
-
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 }
