@@ -3,7 +3,6 @@ import { renderer } from "./renderer";
 import { WorldMapRenderer } from "./WorldMapRenderer";
 import { WORLD_MAP_SIZE, WorldMap } from "./WorldMap";
 import { GameCamera } from "./GameCamera";
-import { MapControls } from "three/examples/jsm/Addons.js";
 import { World } from "./World";
 import { generatePilar } from "./generatePilar";
 import { BlockType } from "./Block";
@@ -18,6 +17,7 @@ function main() {
   world.createLight();
 
   const camera = new GameCamera();
+  camera.addControlsListeners(window);
 
   const worldMapRenderer = new WorldMapRenderer(world.scene);
 
@@ -37,7 +37,7 @@ function main() {
     { type: BlockType.Rock }
   );
 
-  generatePilar(5, 5, 3, 20, worldMap);
+  generatePilar(5, 5, 3, 10, worldMap);
 
   generatePilar(13, 5, 4, 16, worldMap);
 
@@ -64,8 +64,19 @@ function main() {
   stats.showPanel(0);
   document.body.appendChild(stats.dom);
 
-  function render() {
+  let lastTime = 0;
+
+  function render(time: number) {
     stats.begin();
+
+    if (!lastTime) {
+      lastTime = time;
+      requestAnimationFrame(render);
+      return;
+    }
+
+    const deltaTime = time - lastTime;
+    lastTime = time;
 
     const intersects = controls.getIntersect(worldMapRenderer.getAllMeshes());
 
@@ -80,6 +91,8 @@ function main() {
       }
     }
 
+    camera.update(deltaTime);
+
     renderer.render(world.scene, camera.camera);
 
     stats.end();
@@ -87,7 +100,7 @@ function main() {
     requestAnimationFrame(render);
   }
 
-  render();
+  requestAnimationFrame(render);
 
   window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight);

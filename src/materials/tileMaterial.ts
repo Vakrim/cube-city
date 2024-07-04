@@ -1,4 +1,4 @@
-import { NearestFilter, DoubleSide, MeshLambertMaterial } from "three";
+import { NearestFilter, MeshLambertMaterial } from "three";
 import { textureLoader } from "./loader";
 import tileTexturePath from "../assets/tile.png";
 

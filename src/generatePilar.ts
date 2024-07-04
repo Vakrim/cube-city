@@ -13,7 +13,7 @@ export function generatePilar(
       const distance = Math.sqrt(x ** 2 + z ** 2);
 
       if (distance <= radius) {
-        const thisHeight = height - 4 + Math.floor(Math.random() * 8);
+        const thisHeight = height - 2 + Math.floor(Math.random() * 4);
 
         for (let y = 0; y < thisHeight; y++) {
           gameMap.setBlock(
