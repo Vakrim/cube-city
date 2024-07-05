@@ -11,12 +11,7 @@ export class WorldMapRenderer {
   constructor(public scene: Scene) {}
 
   addBlock(position: Position, block: Block) {
-    const material = materials[block.type];
-
-    const mesh = new Mesh(this.boxGeometry, material);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-
+    const mesh = this.createMesh(block);
     this.meshMap.set(block, mesh);
 
     mesh.position.set(position.x, position.y, position.z);
@@ -31,6 +26,20 @@ export class WorldMapRenderer {
       this.scene.remove(mesh);
       this.meshMap.delete(block);
     }
+  }
+
+  createMesh(block: Block) {
+    const material = materials[block.type];
+
+    const mesh = new Mesh(this.boxGeometry, material);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    return mesh;
+  }
+
+  getAllMeshes() {
+    return Array.from(this.meshMap.values());
   }
 }
 

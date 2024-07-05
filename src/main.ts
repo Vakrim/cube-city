@@ -7,6 +7,9 @@ import { MapControls } from "three/examples/jsm/Addons.js";
 import { World } from "./World";
 import { generatePilar } from "./generatePilar";
 import { BlockType } from "./Block";
+import { Controls } from "./Controls";
+import { Mesh, MeshLambertMaterial } from "three";
+import Stats from "stats.js";
 
 function main() {
   const world = new World();
@@ -16,30 +19,76 @@ function main() {
 
   const camera = new GameCamera();
 
-  const gameMapRenderer = new WorldMapRenderer(world.scene);
+  const worldMapRenderer = new WorldMapRenderer(world.scene);
 
-  const gameMap = new WorldMap(gameMapRenderer);
+  const worldMap = new WorldMap(worldMapRenderer);
 
-  gameMap.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
-  gameMap.setBlock({ x: WORLD_MAP_SIZE - 1, y: 0, z: 0 }, { type: BlockType.Rock });
-  gameMap.setBlock({ x: 0, y: 0, z: WORLD_MAP_SIZE - 1 }, { type: BlockType.Rock });
-  gameMap.setBlock({ x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 }, { type: BlockType.Rock });
+  worldMap.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
+  worldMap.setBlock(
+    { x: WORLD_MAP_SIZE - 1, y: 0, z: 0 },
+    { type: BlockType.Rock }
+  );
+  worldMap.setBlock(
+    { x: 0, y: 0, z: WORLD_MAP_SIZE - 1 },
+    { type: BlockType.Rock }
+  );
+  worldMap.setBlock(
+    { x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 },
+    { type: BlockType.Rock }
+  );
 
-  generatePilar(5, 5, 3, 20, gameMap);
+  generatePilar(5, 5, 3, 20, worldMap);
 
-  generatePilar(13, 5, 4, 16, gameMap);
+  generatePilar(13, 5, 4, 16, worldMap);
 
-  const controls = new MapControls(camera.camera, renderer.domElement);
+  new MapControls(camera.camera, renderer.domElement);
+
+  const controls = new Controls(camera.camera, world.scene);
+  controls.addListeners(renderer.domElement);
+
+  const boxHelper = worldMapRenderer.createMesh({
+    type: BlockType.Road,
+    variant: 0,
+  });
+  boxHelper.material = boxHelper.material.clone();
+
+  boxHelper.material.opacity = 0.5;
+  (boxHelper.material as MeshLambertMaterial).color.set(0x75e6da);
+
+  boxHelper.castShadow = false;
+  boxHelper.receiveShadow = false;
+
+  world.scene.add(boxHelper);
+
+  const stats = new Stats();
+  stats.showPanel(0);
+  document.body.appendChild(stats.dom);
 
   function render() {
+    stats.begin();
+
+    const intersects = controls.getIntersect(worldMapRenderer.getAllMeshes());
+
+    if (intersects.length > 0) {
+      const intersect = intersects[0];
+
+      if (intersect.face) {
+        boxHelper.position
+          .copy(intersect.point)
+          .add(intersect.face.normal.clone().multiplyScalar(0.5))
+          .round();
+      }
+    }
+
     renderer.render(world.scene, camera.camera);
+
+    stats.end();
 
     requestAnimationFrame(render);
   }
 
   render();
 
-  // Handle window resize
   window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
