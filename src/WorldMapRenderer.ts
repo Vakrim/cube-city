@@ -1,7 +1,7 @@
 import { BoxGeometry, Material, Mesh, Scene } from "three";
 import { Block, BlockType } from "./Block";
 import { Position } from "./Position";
-import { tileMaterial } from "./materials/tileMaterial";
+import { rockMaterial } from "./materials/rockMaterial";
 
 export class WorldMapRenderer {
   boxGeometry = new BoxGeometry(1, 1, 1);
@@ -44,6 +44,6 @@ export class WorldMapRenderer {
 }
 
 const materials: Record<BlockType, Material> = {
-  [BlockType.Rock]: tileMaterial,
-  [BlockType.Road]: tileMaterial,
+  [BlockType.Rock]: rockMaterial,
+  [BlockType.Road]: rockMaterial,
 };

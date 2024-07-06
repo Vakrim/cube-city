@@ -37,11 +37,8 @@ function main() {
     { type: BlockType.Rock }
   );
 
-  generatePilar(5, 5, 3, 10, worldMap);
-
-  generatePilar(13, 5, 4, 16, worldMap);
-
-  new MapControls(camera.camera, renderer.domElement);
+  generatePilar(15, 18, 3, 10, worldMap);
+  generatePilar(32, 32, 4, 16, worldMap);
 
   const controls = new Controls(camera.camera, world.scene);
   controls.addListeners(renderer.domElement);
@@ -90,6 +87,8 @@ function main() {
           .round();
       }
     }
+
+    world.update(deltaTime);
 
     camera.update(deltaTime);
 

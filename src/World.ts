@@ -2,8 +2,7 @@ import {
   AmbientLight,
   DirectionalLight,
   Mesh,
-  PlaneGeometry,
-  Scene,
+  PlaneGeometry, Scene
 } from "three";
 import { cellMaterial } from "./materials/cellMaterial";
 import { WORLD_MAP_SIZE } from "./WorldMap";
@@ -25,7 +24,7 @@ export class World {
   }
 
   createLight() {
-    const dirLight1 = new DirectionalLight(0xffffff, 5);
+    const dirLight1 = new DirectionalLight(0xfff5e6, 5);
     dirLight1.position.set(WORLD_MAP_SIZE, WORLD_MAP_SIZE, WORLD_MAP_SIZE);
     dirLight1.castShadow = true;
     dirLight1.shadow.camera.left = -46;
@@ -33,8 +32,8 @@ export class World {
     dirLight1.shadow.camera.top = 50;
     dirLight1.shadow.camera.bottom = -60;
 
-    dirLight1.shadow.mapSize.width = 32*2048;
-    dirLight1.shadow.mapSize.height = 32*2048;
+    dirLight1.shadow.mapSize.width = 32 * 2048;
+    dirLight1.shadow.mapSize.height = 32 * 2048;
 
     dirLight1.shadow.camera.updateProjectionMatrix();
 
@@ -44,7 +43,11 @@ export class World {
     dirLight2.position.set(-1, -1, -1);
     this.scene.add(dirLight2);
 
-    const ambientLight = new AmbientLight(0x555555);
+    const ambientLight = new AmbientLight(0xffffff, 0.2);
     this.scene.add(ambientLight);
+  }
+
+  update(dt: number) {
+
   }
 }

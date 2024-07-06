@@ -1,5 +1,21 @@
 import { PerspectiveCamera, Vector3 } from "three";
 import { screen } from "./screen";
+import { WORLD_MAP_SIZE } from "./WorldMap";
+import { clamp } from "./helpers/clamp";
+
+const DEG2RAD = Math.PI / 180.0;
+
+const MIN_CAMERA_RADIUS = 10;
+const MAX_CAMERA_RADIUS = 150;
+const MIN_CAMERA_ELEVATION = 10;
+const MAX_CAMERA_ELEVATION = 60;
+
+const AZIMUTH_SENSITIVITY = 0.2;
+const ELEVATION_SENSITIVITY = 0.2;
+const ZOOM_SENSITIVITY = 0.05;
+const PAN_SENSITIVITY = 0.05;
+
+const Y_AXIS = new Vector3(0, 1, 0);
 
 export class GameCamera {
   cameraSize = 4;
@@ -11,52 +27,81 @@ export class GameCamera {
   mouseY = 0;
   lastMouseX = 0;
   lastMouseY = 0;
+  mouseDeltaY = 0;
   isLeftMouseDown = false;
   isRightMouseDown = false;
+
+  cameraOrigin = new Vector3(WORLD_MAP_SIZE / 2, 0, WORLD_MAP_SIZE / 2);
+  cameraRadius = 50;
+  cameraAzimuth = 30;
+  cameraElevation = 30;
 
   constructor() {
     this.camera = new PerspectiveCamera(75, screen.aspectRatio, 0.1, 1000);
 
-    this.camera.position.set(5, 15, 30);
-    this.camera.lookAt(0, 0, 0);
+    this.updateCameraPosition();
   }
 
-  moveCameraForward(amount: number) {
-    const direction = new Vector3();
-    this.camera.getWorldDirection(direction);
-    direction.y = 0;
-    direction.normalize();
-    direction.multiplyScalar(amount);
-    this.camera.position.add(direction);
-  }
-
-  moveCameraRight(amount: number) {
-    const direction = new Vector3();
-    this.camera.getWorldDirection(direction);
-    direction.y = 0;
-    direction.normalize();
-    direction.applyAxisAngle(new Vector3(0, 1, 0), -Math.PI / 2);
-    direction.multiplyScalar(amount);
-    this.camera.position.add(direction);
-  }
-
-  rotateCamera(deltaX: number, deltaY: number) {
-    this.camera.rotation.y -= deltaX * 0.01;
-    this.camera.rotation.x -= deltaY * 0.01;
+  updateCameraPosition() {
+    this.camera.position.x =
+      this.cameraRadius *
+      Math.sin(this.cameraAzimuth * DEG2RAD) *
+      Math.cos(this.cameraElevation * DEG2RAD);
+    this.camera.position.y =
+      this.cameraRadius * Math.sin(this.cameraElevation * DEG2RAD);
+    this.camera.position.z =
+      this.cameraRadius *
+      Math.cos(this.cameraAzimuth * DEG2RAD) *
+      Math.cos(this.cameraElevation * DEG2RAD);
+    this.camera.position.add(this.cameraOrigin);
+    this.camera.lookAt(this.cameraOrigin);
+    this.camera.updateProjectionMatrix();
+    this.camera.updateMatrixWorld();
   }
 
   update(deltaTime: number) {
     const mouseDeltaX = this.mouseX - this.lastMouseX;
     const mouseDeltaY = this.mouseY - this.lastMouseY;
 
-    this.moveCameraForward(this.scrollForward * this.panSpeed * deltaTime);
-    this.moveCameraRight(this.scrollRight * this.panSpeed * deltaTime);
     if (this.isRightMouseDown) {
-      this.rotateCamera(mouseDeltaX, mouseDeltaY);
+      this.cameraAzimuth += -(mouseDeltaX * AZIMUTH_SENSITIVITY);
+      this.cameraElevation += mouseDeltaY * ELEVATION_SENSITIVITY;
+      this.cameraElevation = clamp(
+        this.cameraElevation,
+        MIN_CAMERA_ELEVATION,
+        MAX_CAMERA_ELEVATION
+      );
     }
+
+    const forward = new Vector3(0, 0, -1).applyAxisAngle(
+      Y_AXIS,
+      this.cameraAzimuth * DEG2RAD
+    );
+    const left = new Vector3(1, 0, 0).applyAxisAngle(
+      Y_AXIS,
+      this.cameraAzimuth * DEG2RAD
+    );
+    this.cameraOrigin.add(
+      forward.multiplyScalar(PAN_SENSITIVITY * this.scrollForward * deltaTime)
+    );
+    this.cameraOrigin.add(
+      left.multiplyScalar(PAN_SENSITIVITY * this.scrollRight * deltaTime)
+    );
+
+    this.cameraOrigin.x = clamp(this.cameraOrigin.x, 0, WORLD_MAP_SIZE);
+    this.cameraOrigin.z = clamp(this.cameraOrigin.z, 0, WORLD_MAP_SIZE);
+
+    this.cameraRadius = clamp(
+      this.cameraRadius + this.mouseDeltaY * ZOOM_SENSITIVITY,
+      MIN_CAMERA_RADIUS,
+      MAX_CAMERA_RADIUS
+    );
+
+    this.updateCameraPosition();
 
     this.lastMouseX = this.mouseX;
     this.lastMouseY = this.mouseY;
+    this.mouseDeltaY = 0;
   }
 
   addControlsListeners(target: Window) {
@@ -105,6 +150,14 @@ export class GameCamera {
     target.addEventListener("mousemove", (event) => {
       this.mouseX = event.clientX;
       this.mouseY = event.clientY;
+    });
+
+    target.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+    });
+
+    target.addEventListener("wheel", (event) => {
+      this.mouseDeltaY += event.deltaY;
     });
   }
 
