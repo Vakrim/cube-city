@@ -42,6 +42,10 @@ export class GameCamera {
     this.updateCameraPosition();
   }
 
+  init() {
+    this.addControlsListeners(window);
+  }
+
   updateCameraPosition() {
     this.camera.position.x =
       this.cameraRadius *

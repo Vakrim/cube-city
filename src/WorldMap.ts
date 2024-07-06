@@ -1,13 +1,33 @@
-import { Block } from "./Block";
+import { Block, BlockType } from "./Block";
+import { Game, GameComponent } from "./Game";
 import { Position } from "./Position";
 import { WorldMapRenderer } from "./WorldMapRenderer";
 
 export const WORLD_MAP_SIZE = 64;
 
-export class WorldMap {
+export class WorldMap implements GameComponent {
   map: (Block | null)[] = Array(WORLD_MAP_SIZE ** 3).fill(null);
+  render: WorldMapRenderer;
 
-  constructor(public render: WorldMapRenderer) {}
+  constructor(game: Game) {
+    this.render = game.getComponent(WorldMapRenderer);
+  }
+
+  init() {
+    this.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
+    this.setBlock(
+      { x: WORLD_MAP_SIZE - 1, y: 0, z: 0 },
+      { type: BlockType.Rock }
+    );
+    this.setBlock(
+      { x: 0, y: 0, z: WORLD_MAP_SIZE - 1 },
+      { type: BlockType.Rock }
+    );
+    this.setBlock(
+      { x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 },
+      { type: BlockType.Rock }
+    );
+  }
 
   setBlock(position: Position, block: Block) {
     const index = this.getIndex(position);
@@ -39,7 +59,11 @@ export class WorldMap {
   }
 
   private getIndex(position: Position) {
-    return position.x + position.y * WORLD_MAP_SIZE + position.z * WORLD_MAP_SIZE ** 2;
+    return (
+      position.x +
+      position.y * WORLD_MAP_SIZE +
+      position.z * WORLD_MAP_SIZE ** 2
+    );
   }
 
   private getPosition(index: number) {

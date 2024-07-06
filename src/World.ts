@@ -2,13 +2,22 @@ import {
   AmbientLight,
   DirectionalLight,
   Mesh,
-  PlaneGeometry, Scene
+  PlaneGeometry,
+  Scene,
 } from "three";
 import { cellMaterial } from "./materials/cellMaterial";
 import { WORLD_MAP_SIZE } from "./WorldMap";
+import { Game, GameComponent } from "./Game";
 
-export class World {
+export class World implements GameComponent {
+  constructor(public game: Game) {}
+
   scene = new Scene();
+
+  init(): void {
+    this.createFloor();
+    this.createLight();
+  }
 
   createFloor() {
     const planeGeometry = new PlaneGeometry(WORLD_MAP_SIZE, WORLD_MAP_SIZE);
@@ -47,7 +56,5 @@ export class World {
     this.scene.add(ambientLight);
   }
 
-  update(dt: number) {
-
-  }
+  update(dt: number) {}
 }

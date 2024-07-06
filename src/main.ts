@@ -1,67 +1,46 @@
 import "./style.css";
 import { renderer } from "./renderer";
 import { WorldMapRenderer } from "./WorldMapRenderer";
-import { WORLD_MAP_SIZE, WorldMap } from "./WorldMap";
+import { WorldMap } from "./WorldMap";
 import { GameCamera } from "./GameCamera";
 import { World } from "./World";
 import { generatePilar } from "./generatePilar";
-import { BlockType } from "./Block";
 import { Controls } from "./Controls";
-import { Mesh, MeshLambertMaterial } from "three";
 import Stats from "stats.js";
+import { Placing } from "./Placing";
+import { Game } from "./Game";
 
 function main() {
-  const world = new World();
+  const game = new Game();
 
-  world.createFloor();
-  world.createLight();
+  game.addComponent(World);
 
-  const camera = new GameCamera();
-  camera.addControlsListeners(window);
+  game.addComponent(GameCamera);
 
-  const worldMapRenderer = new WorldMapRenderer(world.scene);
+  game.addComponent(WorldMapRenderer);
 
-  const worldMap = new WorldMap(worldMapRenderer);
+  game.addComponent(WorldMap);
 
-  worldMap.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
-  worldMap.setBlock(
-    { x: WORLD_MAP_SIZE - 1, y: 0, z: 0 },
-    { type: BlockType.Rock }
-  );
-  worldMap.setBlock(
-    { x: 0, y: 0, z: WORLD_MAP_SIZE - 1 },
-    { type: BlockType.Rock }
-  );
-  worldMap.setBlock(
-    { x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 },
-    { type: BlockType.Rock }
-  );
+  game.addComponent(Controls);
 
-  generatePilar(15, 18, 3, 10, worldMap);
-  generatePilar(32, 32, 4, 16, worldMap);
+  game.addComponent(Placing);
 
-  const controls = new Controls(camera.camera, world.scene);
-  controls.addListeners(renderer.domElement);
+  generatePilar(15, 18, 3, 10, game.getComponent(WorldMap));
 
-  const boxHelper = worldMapRenderer.createMesh({
-    type: BlockType.Road,
-    variant: 0,
-  });
-  boxHelper.material = boxHelper.material.clone();
+  generatePilar(32, 32, 4, 16, game.getComponent(WorldMap));
+  generatePilar(36, 32, 8, 4, game.getComponent(WorldMap));
 
-  boxHelper.material.opacity = 0.5;
-  (boxHelper.material as MeshLambertMaterial).color.set(0x75e6da);
-
-  boxHelper.castShadow = false;
-  boxHelper.receiveShadow = false;
-
-  world.scene.add(boxHelper);
 
   const stats = new Stats();
   stats.showPanel(0);
   document.body.appendChild(stats.dom);
 
   let lastTime = 0;
+
+  game.init();
+
+  const scene = game.getComponent(World).scene;
+  const camera = game.getComponent(GameCamera);
 
   function render(time: number) {
     stats.begin();
@@ -75,24 +54,9 @@ function main() {
     const deltaTime = time - lastTime;
     lastTime = time;
 
-    const intersects = controls.getIntersect(worldMapRenderer.getAllMeshes());
+    game.update(deltaTime);
 
-    if (intersects.length > 0) {
-      const intersect = intersects[0];
-
-      if (intersect.face) {
-        boxHelper.position
-          .copy(intersect.point)
-          .add(intersect.face.normal.clone().multiplyScalar(0.5))
-          .round();
-      }
-    }
-
-    world.update(deltaTime);
-
-    camera.update(deltaTime);
-
-    renderer.render(world.scene, camera.camera);
+    renderer.render(scene, camera.camera);
 
     stats.end();
 
