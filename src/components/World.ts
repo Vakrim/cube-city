@@ -5,14 +5,16 @@ import {
   PlaneGeometry,
   Scene,
 } from "three";
-import { cellMaterial } from "./materials/cellMaterial";
+import { cellMaterial } from "../materials/cellMaterial";
 import { WORLD_MAP_SIZE } from "./WorldMap";
-import { Game, GameComponent } from "./Game";
+import { Game, GameComponent } from "../Game";
 
 export class World implements GameComponent {
-  constructor(public game: Game) {}
-
   scene = new Scene();
+
+  constructor(public game: Game) {
+    this.game.addComponentInstance(Scene, this.scene);
+  }
 
   init(): void {
     this.createFloor();

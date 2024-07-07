@@ -1,20 +1,33 @@
 import { Mesh, MeshLambertMaterial, Scene } from "three";
-import { BlockType } from "./Block";
+import { BlockType } from "../Block";
 import { WorldMapRenderer } from "./WorldMapRenderer";
 import { Controls } from "./Controls";
-import { World } from "./World";
-import { Game } from "./Game";
+import { Game } from "../Game";
+import { WorldMap } from "./WorldMap";
 
 export class Placing {
   helperBox: Mesh | null = null;
   private worldMapRenderer: WorldMapRenderer;
   private controls: Controls;
   private scene: Scene;
+  worldMap: WorldMap;
 
   constructor(game: Game) {
+    this.worldMap = game.getComponent(WorldMap);
     this.worldMapRenderer = game.getComponent(WorldMapRenderer);
     this.controls = game.getComponent(Controls);
-    this.scene = game.getComponent(World).scene;
+    this.scene = game.getComponent(Scene);
+  }
+
+  init() {
+    this.controls.addEventListener("click", () => {
+      if (this.helperBox) {
+        this.worldMap.setBlock(this.helperBox.position, {
+          type: BlockType.Road,
+          variant: 0,
+        });
+      }
+    });
   }
 
   createHelperBlock() {

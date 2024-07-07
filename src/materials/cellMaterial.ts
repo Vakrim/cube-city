@@ -6,7 +6,7 @@ import {
 } from "three";
 import cellTexturePath from "../assets/cell.png";
 import { textureLoader } from "./loader";
-import { WORLD_MAP_SIZE } from "../WorldMap";
+import { WORLD_MAP_SIZE } from "../components/WorldMap";
 
 const cellTexture = textureLoader.load(cellTexturePath);
 

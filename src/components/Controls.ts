@@ -6,10 +6,8 @@ import {
   Scene,
   Vector2,
 } from "three";
-import { Game } from "./Game";
-import { World } from "./World";
-import { GameCamera } from "./GameCamera";
-import { renderer } from "./renderer";
+import { Game } from "../Game";
+import { renderer } from "../renderer";
 
 export class Controls extends EventDispatcher<{
   click: {};
@@ -22,8 +20,8 @@ export class Controls extends EventDispatcher<{
   constructor(game: Game) {
     super();
 
-    this.camera = game.getComponent(GameCamera).camera;
-    this.scene = game.getComponent(World).scene;
+    this.camera = game.getComponent(Camera);
+    this.scene = game.getComponent(Scene);
   }
 
   init() {

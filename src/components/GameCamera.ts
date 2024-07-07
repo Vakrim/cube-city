@@ -1,7 +1,8 @@
-import { PerspectiveCamera, Vector3 } from "three";
-import { screen } from "./screen";
+import { Camera, PerspectiveCamera, Vector3 } from "three";
+import { screen } from "../screen";
 import { WORLD_MAP_SIZE } from "./WorldMap";
-import { clamp } from "./helpers/clamp";
+import { clamp } from "../helpers/clamp";
+import { Game } from "../Game";
 
 const DEG2RAD = Math.PI / 180.0;
 
@@ -36,8 +37,10 @@ export class GameCamera {
   cameraAzimuth = 30;
   cameraElevation = 30;
 
-  constructor() {
+  constructor(game: Game) {
     this.camera = new PerspectiveCamera(75, screen.aspectRatio, 0.1, 1000);
+
+    game.addComponentInstance(Camera, this.camera);
 
     this.updateCameraPosition();
   }

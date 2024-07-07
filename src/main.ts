@@ -1,35 +1,35 @@
 import "./style.css";
 import { renderer } from "./renderer";
-import { WorldMapRenderer } from "./WorldMapRenderer";
-import { WorldMap } from "./WorldMap";
-import { GameCamera } from "./GameCamera";
-import { World } from "./World";
+import { WorldMapRenderer } from "./components/WorldMapRenderer";
+import { WorldMap } from "./components/WorldMap";
+import { GameCamera } from "./components/GameCamera";
+import { World } from "./components/World";
 import { generatePilar } from "./generatePilar";
-import { Controls } from "./Controls";
+import { Controls } from "./components/Controls";
 import Stats from "stats.js";
-import { Placing } from "./Placing";
+import { Placing } from "./components/Placing";
 import { Game } from "./Game";
+import { Camera, Scene } from "three";
 
 function main() {
   const game = new Game();
 
-  game.addComponent(World);
+  game.createComponent(World);
 
-  game.addComponent(GameCamera);
+  game.createComponent(GameCamera);
 
-  game.addComponent(WorldMapRenderer);
+  game.createComponent(WorldMapRenderer);
 
-  game.addComponent(WorldMap);
+  game.createComponent(WorldMap);
 
-  game.addComponent(Controls);
+  game.createComponent(Controls);
 
-  game.addComponent(Placing);
+  game.createComponent(Placing);
 
   generatePilar(15, 18, 3, 10, game.getComponent(WorldMap));
 
   generatePilar(32, 32, 4, 16, game.getComponent(WorldMap));
   generatePilar(36, 32, 8, 4, game.getComponent(WorldMap));
-
 
   const stats = new Stats();
   stats.showPanel(0);
@@ -39,24 +39,18 @@ function main() {
 
   game.init();
 
-  const scene = game.getComponent(World).scene;
-  const camera = game.getComponent(GameCamera);
+  const scene = game.getComponent(Scene);
+  const camera = game.getComponent(Camera);
 
-  function render(time: number) {
+  function render(time?: number) {
     stats.begin();
 
-    if (!lastTime) {
-      lastTime = time;
-      requestAnimationFrame(render);
-      return;
-    }
-
-    const deltaTime = time - lastTime;
-    lastTime = time;
+    const deltaTime = time ? time - lastTime : 1 / 60;
+    if (time) lastTime = time;
 
     game.update(deltaTime);
 
-    renderer.render(scene, camera.camera);
+    renderer.render(scene, camera);
 
     stats.end();
 

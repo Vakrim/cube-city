@@ -1,8 +1,8 @@
 import { BoxGeometry, Material, Mesh } from "three";
-import { Block, BlockType } from "./Block";
-import { Position } from "./Position";
-import { rockMaterial } from "./materials/rockMaterial";
-import { Game, GameComponent } from "./Game";
+import { Block, BlockType } from "../Block";
+import { Position } from "../Position";
+import { rockMaterial } from "../materials/rockMaterial";
+import { Game, GameComponent } from "../Game";
 import { World } from "./World";
 
 export class WorldMapRenderer implements GameComponent {

@@ -1,6 +1,6 @@
-import { Block, BlockType } from "./Block";
-import { Game, GameComponent } from "./Game";
-import { Position } from "./Position";
+import { Block, BlockType } from "../Block";
+import { Game, GameComponent } from "../Game";
+import { Position } from "../Position";
 import { WorldMapRenderer } from "./WorldMapRenderer";
 
 export const WORLD_MAP_SIZE = 64;

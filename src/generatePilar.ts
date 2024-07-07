@@ -1,4 +1,4 @@
-import { WorldMap } from "./WorldMap";
+import { WorldMap } from "./components/WorldMap";
 import { BlockType } from "./Block";
 
 export function generatePilar(

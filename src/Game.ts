@@ -9,21 +9,39 @@ export interface GameComponentConstructor<
   new (game: Game): T;
 }
 
-export class Game {
-  components = new Map<string, GameComponent>();
+interface AnyClass<T> {
+  new (...args: any[]): T;
+}
 
-  addComponent(component: GameComponentConstructor) {
-    if (this.components.has(component.name)) {
-      throw new Error(`Component ${component.name} already added`);
+export class Game {
+  components = new Map<unknown, GameComponent>();
+  instances = new Map<unknown, unknown>();
+
+  createComponent(componentConstructor: GameComponentConstructor) {
+    if (this.components.has(componentConstructor)) {
+      throw new Error(`Component ${componentConstructor.name} already added`);
     }
 
-    this.components.set(component.name, new component(this));
+    this.components.set(componentConstructor, new componentConstructor(this));
   }
 
-  getComponent<T extends GameComponent>(
-    componentConstructor: GameComponentConstructor<T>
+  addComponentInstance<T extends { new (...args: unknown[]): InstanceType<T> }>(
+    constructor: T,
+    instance: InstanceType<T>
   ) {
-    const component = this.components.get(componentConstructor.name);
+    if (this.components.has(constructor)) {
+      throw new Error(`Component ${constructor.name} already added`);
+    }
+
+    this.instances.set(constructor, instance);
+  }
+
+  getComponent<T>(
+    componentConstructor: AnyClass<T>
+  ) {
+    const component =
+      this.components.get(componentConstructor) ??
+      this.instances.get(componentConstructor);
 
     if (!component) {
       throw new Error(`Component ${componentConstructor.name} not found`);
