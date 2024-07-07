@@ -1,12 +1,12 @@
-import { Mesh, MeshLambertMaterial, Scene } from "three";
+import { Scene } from "three";
 import { BlockType } from "../Block";
-import { WorldMapRenderer } from "./WorldMapRenderer";
+import { BlockMesh, WorldMapRenderer } from "./WorldMapRenderer";
 import { Controls } from "./Controls";
 import { Game } from "../Game";
 import { WorldMap } from "./WorldMap";
 
 export class Placing {
-  helperBox: Mesh | null = null;
+  helperBox: BlockMesh | null = null;
   private worldMapRenderer: WorldMapRenderer;
   private controls: Controls;
   private scene: Scene;
@@ -20,7 +20,7 @@ export class Placing {
   }
 
   init() {
-    this.controls.addEventListener("click", () => {
+    this.controls.addEventListener("leftClick", () => {
       if (this.helperBox) {
         this.worldMap.setBlock(this.helperBox.position, {
           type: BlockType.Road,
@@ -38,7 +38,7 @@ export class Placing {
     helperBox.material = helperBox.material.clone();
 
     helperBox.material.opacity = 0.5;
-    (helperBox.material as MeshLambertMaterial).color.set(0x75e6da);
+    helperBox.material.color.set(0x75e6da);
 
     helperBox.castShadow = false;
     helperBox.receiveShadow = false;

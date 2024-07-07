@@ -5,3 +5,4 @@
 
 ## Assets
 - https://opengameart.org/content/paving-jagged-stone-seamless-texture-with-normalmap
+- https://opengameart.org/content/tree-texture

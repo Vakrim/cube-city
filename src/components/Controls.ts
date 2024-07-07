@@ -10,7 +10,7 @@ import { Game } from "../Game";
 import { renderer } from "../renderer";
 
 export class Controls extends EventDispatcher<{
-  click: {};
+  leftClick: {};
 }> {
   rayCaster = new Raycaster();
   pointer: Vector2 | null = null;
@@ -40,7 +40,9 @@ export class Controls extends EventDispatcher<{
       this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
       this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      this.dispatchEvent({ type: "click" });
+      if (event.button === 0) {
+        this.dispatchEvent({ type: "leftClick" });
+      }
     });
   }
 

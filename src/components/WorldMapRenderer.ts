@@ -1,13 +1,19 @@
-import { BoxGeometry, Material, Mesh } from "three";
+import {
+  BoxGeometry,
+  BufferGeometry,
+  Mesh,
+  MeshBasicMaterial,
+  MeshLambertMaterial,
+  Vector3,
+} from "three";
 import { Block, BlockType } from "../Block";
 import { Position } from "../Position";
 import { rockMaterial } from "../materials/rockMaterial";
 import { Game, GameComponent } from "../Game";
 import { World } from "./World";
+import { woodMaterial } from "../materials/woodMaterial";
 
 export class WorldMapRenderer implements GameComponent {
-  boxGeometry = new BoxGeometry(1, 1, 1);
-
   private meshMap = new Map<Block, Mesh>();
 
   constructor(private game: Game) {}
@@ -18,7 +24,7 @@ export class WorldMapRenderer implements GameComponent {
     const mesh = this.createMesh(block);
     this.meshMap.set(block, mesh);
 
-    mesh.position.set(position.x, position.y, position.z);
+    mesh.position.add(new Vector3(position.x, position.y, position.z));
 
     this.game.getComponent(World).scene.add(mesh);
   }
@@ -33,13 +39,7 @@ export class WorldMapRenderer implements GameComponent {
   }
 
   createMesh(block: Block) {
-    const material = materials[block.type];
-
-    const mesh = new Mesh(this.boxGeometry, material);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-
-    return mesh;
+    return meshFactory[block.type](block);
   }
 
   getAllMeshes() {
@@ -47,7 +47,37 @@ export class WorldMapRenderer implements GameComponent {
   }
 }
 
-const materials: Record<BlockType, Material> = {
-  [BlockType.Rock]: rockMaterial,
-  [BlockType.Road]: rockMaterial,
+const unitBoxGeometry = new BoxGeometry(1, 1, 1);
+
+const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
+  [BlockType.Rock]: () => {
+    const mesh = new Mesh(unitBoxGeometry, rockMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    return mesh;
+  },
+  [BlockType.Road]: () => {
+    // const outerBox = new Mesh(unitBoxGeometry, invisibleMaterial);
+
+    // const innerBox = new Mesh(roadGeometry, woodMaterial);
+    // innerBox.position.y = -0.45;
+    // outerBox.add(innerBox);
+
+    // return outerBox;
+
+    const innerBox = new Mesh(roadGeometry, woodMaterial);
+    innerBox.position.y = -0.45;
+
+    return innerBox;
+  },
 };
+
+export type BlockMesh = Mesh<
+  BufferGeometry,
+  MeshBasicMaterial | MeshLambertMaterial
+>;
+
+const invisibleMaterial = new MeshBasicMaterial({ visible: false });
+
+const roadGeometry = new BoxGeometry(1, 0.1, 1);

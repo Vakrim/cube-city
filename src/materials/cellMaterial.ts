@@ -1,9 +1,4 @@
-import {
-  RepeatWrapping,
-  NearestFilter,
-  MeshBasicMaterial,
-  MeshLambertMaterial,
-} from "three";
+import { RepeatWrapping, NearestFilter, MeshLambertMaterial } from "three";
 import cellTexturePath from "../assets/cell.png";
 import { textureLoader } from "./loader";
 import { WORLD_MAP_SIZE } from "../components/WorldMap";
