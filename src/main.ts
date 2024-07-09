@@ -10,19 +10,22 @@ import Stats from "stats.js";
 import { Placing } from "./components/Placing";
 import { Game } from "./Game";
 import { Camera, Scene } from "three";
+import { GUI } from "dat.gui";
 
 function main() {
   const game = new Game();
 
+  game.addComponentInstance(GUI, new GUI());
+
   game.createComponent(World);
+
+  game.createComponent(Controls);
 
   game.createComponent(GameCamera);
 
   game.createComponent(WorldMapRenderer);
 
   game.createComponent(WorldMap);
-
-  game.createComponent(Controls);
 
   game.createComponent(Placing);
 

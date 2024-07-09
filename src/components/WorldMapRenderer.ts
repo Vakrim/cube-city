@@ -54,22 +54,31 @@ const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
     const mesh = new Mesh(unitBoxGeometry, rockMaterial);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-
     return mesh;
   },
-  [BlockType.Road]: () => {
-    // const outerBox = new Mesh(unitBoxGeometry, invisibleMaterial);
-
-    // const innerBox = new Mesh(roadGeometry, woodMaterial);
-    // innerBox.position.y = -0.45;
-    // outerBox.add(innerBox);
-
-    // return outerBox;
-
-    const innerBox = new Mesh(roadGeometry, woodMaterial);
-    innerBox.position.y = -0.45;
-
-    return innerBox;
+  [BlockType.WoodenSupport]: () => {
+    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  },
+  [BlockType.House]: () => {
+    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  },
+  [BlockType.Lumberjack]: () => {
+    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  },
+  [BlockType.Sawmill]: () => {
+    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
   },
 };
 
@@ -77,7 +86,3 @@ export type BlockMesh = Mesh<
   BufferGeometry,
   MeshBasicMaterial | MeshLambertMaterial
 >;
-
-const invisibleMaterial = new MeshBasicMaterial({ visible: false });
-
-const roadGeometry = new BoxGeometry(1, 0.1, 1);

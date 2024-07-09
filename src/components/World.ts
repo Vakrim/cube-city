@@ -35,26 +35,24 @@ export class World implements GameComponent {
   }
 
   createLight() {
-    const dirLight1 = new DirectionalLight(0xfff5e6, 5);
-    dirLight1.position.set(WORLD_MAP_SIZE, WORLD_MAP_SIZE, WORLD_MAP_SIZE);
-    dirLight1.castShadow = true;
-    dirLight1.shadow.camera.left = -46;
-    dirLight1.shadow.camera.right = 46;
-    dirLight1.shadow.camera.top = 50;
-    dirLight1.shadow.camera.bottom = -60;
+    const sunLight = new DirectionalLight(0xfff5e6, 5);
+    sunLight.position.set(WORLD_MAP_SIZE, WORLD_MAP_SIZE, 2 * WORLD_MAP_SIZE);
+    sunLight.castShadow = true;
 
-    dirLight1.shadow.mapSize.width = 32 * 2048;
-    dirLight1.shadow.mapSize.height = 32 * 2048;
+    sunLight.shadow.mapSize.width = 1024;
+    sunLight.shadow.mapSize.height = 1024;
+    sunLight.shadow.bias = 0.0001;
 
-    dirLight1.shadow.camera.updateProjectionMatrix();
+    sunLight.shadow.camera.left = -46;
+    sunLight.shadow.camera.right = 46;
+    sunLight.shadow.camera.top = 50;
+    sunLight.shadow.camera.bottom = -60;
 
-    this.scene.add(dirLight1);
+    sunLight.shadow.camera.updateProjectionMatrix();
 
-    const dirLight2 = new DirectionalLight(0x002288, 3);
-    dirLight2.position.set(-1, -1, -1);
-    this.scene.add(dirLight2);
+    this.scene.add(sunLight);
 
-    const ambientLight = new AmbientLight(0xffffff, 0.2);
+    const ambientLight = new AmbientLight(0xffffff, 0.5);
     this.scene.add(ambientLight);
   }
 

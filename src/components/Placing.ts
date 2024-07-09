@@ -10,7 +10,7 @@ export class Placing {
   private worldMapRenderer: WorldMapRenderer;
   private controls: Controls;
   private scene: Scene;
-  worldMap: WorldMap;
+  private worldMap: WorldMap;
 
   constructor(game: Game) {
     this.worldMap = game.getComponent(WorldMap);
@@ -19,20 +19,11 @@ export class Placing {
     this.scene = game.getComponent(Scene);
   }
 
-  init() {
-    this.controls.addEventListener("leftClick", () => {
-      if (this.helperBox) {
-        this.worldMap.setBlock(this.helperBox.position, {
-          type: BlockType.Road,
-          variant: 0,
-        });
-      }
-    });
-  }
+  init() {}
 
   createHelperBlock() {
     const helperBox = this.worldMapRenderer.createMesh({
-      type: BlockType.Road,
+      type: BlockType.WoodenSupport,
       variant: 0,
     });
     helperBox.material = helperBox.material.clone();
@@ -63,6 +54,13 @@ export class Placing {
           .copy(intersect.point)
           .add(intersect.face.normal.clone().multiplyScalar(0.5))
           .round();
+
+        if (this.controls.keyPressedThisFrame.leftMouseButton) {
+          this.worldMap.setBlock(this.helperBox.position, {
+            type: BlockType.WoodenSupport,
+            variant: 0,
+          });
+        }
       }
     } else {
       if (this.helperBox) {

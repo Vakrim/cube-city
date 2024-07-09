@@ -1,6 +1,7 @@
 export interface GameComponent {
   init?(): void;
   update?(deltaTime: number): void;
+  afterUpdate?(deltaTime: number): void;
 }
 
 export interface GameComponentConstructor<
@@ -25,7 +26,7 @@ export class Game {
     this.components.set(componentConstructor, new componentConstructor(this));
   }
 
-  addComponentInstance<T extends { new (...args: unknown[]): InstanceType<T> }>(
+  addComponentInstance<T extends { new (...args: any[]): InstanceType<T> }>(
     constructor: T,
     instance: InstanceType<T>
   ) {
@@ -56,5 +57,7 @@ export class Game {
 
   update(deltaTime: number) {
     this.components.forEach((component) => component.update?.(deltaTime));
+
+    this.components.forEach((component) => component.afterUpdate?.(deltaTime));
   }
 }

@@ -1,8 +1,9 @@
-import { Camera, PerspectiveCamera, Vector3 } from "three";
+import { Camera, PerspectiveCamera, Vector2, Vector3 } from "three";
 import { screen } from "../screen";
 import { WORLD_MAP_SIZE } from "./WorldMap";
 import { clamp } from "../helpers/clamp";
 import { Game } from "../Game";
+import { Controls } from "./Controls";
 
 const DEG2RAD = Math.PI / 180.0;
 
@@ -22,32 +23,27 @@ export class GameCamera {
   cameraSize = 4;
   camera: PerspectiveCamera;
   panSpeed = 0.05;
-  scrollRight = 0;
-  scrollForward = 0;
-  mouseX = 0;
-  mouseY = 0;
-  lastMouseX = 0;
-  lastMouseY = 0;
-  mouseDeltaY = 0;
-  isLeftMouseDown = false;
-  isRightMouseDown = false;
+  lastPointer = new Vector2(0, 0);
+  lastWheelPosition = 0;
 
   cameraOrigin = new Vector3(WORLD_MAP_SIZE / 2, 0, WORLD_MAP_SIZE / 2);
   cameraRadius = 50;
   cameraAzimuth = 30;
   cameraElevation = 30;
 
+  controls: Controls;
+
   constructor(game: Game) {
     this.camera = new PerspectiveCamera(75, screen.aspectRatio, 0.1, 1000);
 
     game.addComponentInstance(Camera, this.camera);
 
+    this.controls = game.getComponent(Controls);
+
     this.updateCameraPosition();
   }
 
-  init() {
-    this.addControlsListeners(window);
-  }
+  init() {}
 
   updateCameraPosition() {
     this.camera.position.x =
@@ -67,10 +63,19 @@ export class GameCamera {
   }
 
   update(deltaTime: number) {
-    const mouseDeltaX = this.mouseX - this.lastMouseX;
-    const mouseDeltaY = this.mouseY - this.lastMouseY;
+    const mouseDeltaX = this.controls.pointer.x - this.lastPointer.x;
+    const mouseDeltaY = this.controls.pointer.y - this.lastPointer.y;
+    const wheelDelta = this.controls.wheelPosition - this.lastWheelPosition;
 
-    if (this.isRightMouseDown) {
+    const scrollForward =
+      (this.controls.keyPressed.w ? 1 : 0) -
+      (this.controls.keyPressed.s ? 1 : 0);
+
+    const scrollRight =
+      (this.controls.keyPressed.d ? 1 : 0) -
+      (this.controls.keyPressed.a ? 1 : 0);
+
+    if (this.controls.keyPressed.rightMouseButton) {
       this.cameraAzimuth += -(mouseDeltaX * AZIMUTH_SENSITIVITY);
       this.cameraElevation += mouseDeltaY * ELEVATION_SENSITIVITY;
       this.cameraElevation = clamp(
@@ -89,83 +94,25 @@ export class GameCamera {
       this.cameraAzimuth * DEG2RAD
     );
     this.cameraOrigin.add(
-      forward.multiplyScalar(PAN_SENSITIVITY * this.scrollForward * deltaTime)
+      forward.multiplyScalar(PAN_SENSITIVITY * scrollForward * deltaTime)
     );
     this.cameraOrigin.add(
-      left.multiplyScalar(PAN_SENSITIVITY * this.scrollRight * deltaTime)
+      left.multiplyScalar(PAN_SENSITIVITY * scrollRight * deltaTime)
     );
 
     this.cameraOrigin.x = clamp(this.cameraOrigin.x, 0, WORLD_MAP_SIZE);
     this.cameraOrigin.z = clamp(this.cameraOrigin.z, 0, WORLD_MAP_SIZE);
 
     this.cameraRadius = clamp(
-      this.cameraRadius + this.mouseDeltaY * ZOOM_SENSITIVITY,
+      this.cameraRadius + wheelDelta * ZOOM_SENSITIVITY,
       MIN_CAMERA_RADIUS,
       MAX_CAMERA_RADIUS
     );
 
     this.updateCameraPosition();
 
-    this.lastMouseX = this.mouseX;
-    this.lastMouseY = this.mouseY;
-    this.mouseDeltaY = 0;
-  }
-
-  addControlsListeners(target: Window) {
-    target.addEventListener("keydown", (event) => {
-      if (event.key === "w") {
-        this.scrollForward = 1;
-      }
-      if (event.key === "s") {
-        this.scrollForward = -1;
-      }
-      if (event.key === "a") {
-        this.scrollRight = -1;
-      }
-      if (event.key === "d") {
-        this.scrollRight = 1;
-      }
-    });
-
-    target.addEventListener("keyup", (event) => {
-      if (event.key === "w" || event.key === "s") {
-        this.scrollForward = 0;
-      }
-      if (event.key === "a" || event.key === "d") {
-        this.scrollRight = 0;
-      }
-    });
-
-    target.addEventListener("mousedown", (event) => {
-      if (event.button === 0) {
-        this.isLeftMouseDown = true;
-      }
-      if (event.button === 2) {
-        this.isRightMouseDown = true;
-      }
-    });
-
-    target.addEventListener("mouseup", (event) => {
-      if (event.button === 0) {
-        this.isLeftMouseDown = false;
-      }
-      if (event.button === 2) {
-        this.isRightMouseDown = false;
-      }
-    });
-
-    target.addEventListener("mousemove", (event) => {
-      this.mouseX = event.clientX;
-      this.mouseY = event.clientY;
-    });
-
-    target.addEventListener("contextmenu", (event) => {
-      event.preventDefault();
-    });
-
-    target.addEventListener("wheel", (event) => {
-      this.mouseDeltaY += event.deltaY;
-    });
+    this.lastPointer.copy(this.controls.pointer);
+    this.lastWheelPosition = this.controls.wheelPosition;
   }
 
   updateAspectRatio() {
