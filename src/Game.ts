@@ -5,7 +5,7 @@ export interface GameComponent {
 }
 
 export interface GameComponentConstructor<
-  T extends GameComponent = GameComponent
+  T extends GameComponent = GameComponent,
 > {
   new (game: Game): T;
 }
@@ -28,7 +28,7 @@ export class Game {
 
   addComponentInstance<T extends { new (...args: any[]): InstanceType<T> }>(
     constructor: T,
-    instance: InstanceType<T>
+    instance: InstanceType<T>,
   ) {
     if (this.components.has(constructor)) {
       throw new Error(`Component ${constructor.name} already added`);
@@ -37,9 +37,7 @@ export class Game {
     this.instances.set(constructor, instance);
   }
 
-  getComponent<T>(
-    componentConstructor: AnyClass<T>
-  ) {
+  getComponent<T>(componentConstructor: AnyClass<T>) {
     const component =
       this.components.get(componentConstructor) ??
       this.instances.get(componentConstructor);

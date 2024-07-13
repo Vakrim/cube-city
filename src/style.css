@@ -16,3 +16,9 @@
 body {
   margin: 0;
 }
+
+#gui {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+}

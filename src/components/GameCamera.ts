@@ -81,23 +81,23 @@ export class GameCamera {
       this.cameraElevation = clamp(
         this.cameraElevation,
         MIN_CAMERA_ELEVATION,
-        MAX_CAMERA_ELEVATION
+        MAX_CAMERA_ELEVATION,
       );
     }
 
     const forward = new Vector3(0, 0, -1).applyAxisAngle(
       Y_AXIS,
-      this.cameraAzimuth * DEG2RAD
+      this.cameraAzimuth * DEG2RAD,
     );
     const left = new Vector3(1, 0, 0).applyAxisAngle(
       Y_AXIS,
-      this.cameraAzimuth * DEG2RAD
+      this.cameraAzimuth * DEG2RAD,
     );
     this.cameraOrigin.add(
-      forward.multiplyScalar(PAN_SENSITIVITY * scrollForward * deltaTime)
+      forward.multiplyScalar(PAN_SENSITIVITY * scrollForward * deltaTime),
     );
     this.cameraOrigin.add(
-      left.multiplyScalar(PAN_SENSITIVITY * scrollRight * deltaTime)
+      left.multiplyScalar(PAN_SENSITIVITY * scrollRight * deltaTime),
     );
 
     this.cameraOrigin.x = clamp(this.cameraOrigin.x, 0, WORLD_MAP_SIZE);
@@ -106,7 +106,7 @@ export class GameCamera {
     this.cameraRadius = clamp(
       this.cameraRadius + wheelDelta * ZOOM_SENSITIVITY,
       MIN_CAMERA_RADIUS,
-      MAX_CAMERA_RADIUS
+      MAX_CAMERA_RADIUS,
     );
 
     this.updateCameraPosition();

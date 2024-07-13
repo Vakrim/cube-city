@@ -17,15 +17,15 @@ export class WorldMap implements GameComponent {
     this.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
     this.setBlock(
       { x: WORLD_MAP_SIZE - 1, y: 0, z: 0 },
-      { type: BlockType.Rock }
+      { type: BlockType.Rock },
     );
     this.setBlock(
       { x: 0, y: 0, z: WORLD_MAP_SIZE - 1 },
-      { type: BlockType.Rock }
+      { type: BlockType.Rock },
     );
     this.setBlock(
       { x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 },
-      { type: BlockType.Rock }
+      { type: BlockType.Rock },
     );
   }
 

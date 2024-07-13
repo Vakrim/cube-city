@@ -12,6 +12,9 @@ import { Game } from "./Game";
 import { Camera, Scene } from "three";
 import { GUI } from "dat.gui";
 import { Construction } from "./components/Construction";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { App } from "./App";
 
 function main() {
   const game = new Game();
@@ -68,6 +71,12 @@ function main() {
   window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
+
+  ReactDOM.createRoot(document.getElementById("gui")!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  );
 }
 
 main();

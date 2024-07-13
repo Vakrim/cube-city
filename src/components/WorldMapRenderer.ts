@@ -82,7 +82,6 @@ const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
   },
 };
 
-
 const houseMaterial = woodMaterial.clone();
 houseMaterial.color.set(0xe06666);
 

@@ -9,5 +9,5 @@ const rockNormalMap = textureLoader.load(rockNormalMapPath);
 export const rockMaterial = new MeshLambertMaterial({
   map: rockTexture,
   normalMap: rockNormalMap,
-  normalScale: new Vector2(1, 1)
+  normalScale: new Vector2(1, 1),
 });

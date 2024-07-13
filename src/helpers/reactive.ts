@@ -3,7 +3,8 @@ import { isEqual } from "lodash-es";
 export function reactive<T, Args extends unknown[]>(
   factory: (...args: Args) => T,
   onCreation?: (result: T) => void,
-  onDestruction?: (result: T) => void): Reactive<T, Args> {
+  onDestruction?: (result: T) => void,
+): Reactive<T, Args> {
   let cached: T | null = null;
   let cachedArgs: Args | null = null;
 

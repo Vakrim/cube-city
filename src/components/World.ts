@@ -56,5 +56,5 @@ export class World implements GameComponent {
     this.scene.add(ambientLight);
   }
 
-  update(dt: number) {}
+  update() {}
 }

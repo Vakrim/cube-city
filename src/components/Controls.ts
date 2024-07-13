@@ -99,7 +99,7 @@ export class Controls {
   getIntersect(objects: Object3D[]) {
     const coords = new Vector2(
       (this.pointer.x / window.innerWidth) * 2 - 1,
-      -(this.pointer.y / window.innerHeight) * 2 + 1
+      -(this.pointer.y / window.innerHeight) * 2 + 1,
     );
 
     this.rayCaster.setFromCamera(coords, this.game.getComponent(Camera));
@@ -108,10 +108,13 @@ export class Controls {
 }
 
 function createRecordFromKeys<T extends string>(
-  keys: readonly T[]
+  keys: readonly T[],
 ): Record<T, boolean> {
-  return keys.reduce((acc, key) => {
-    acc[key] = false;
-    return acc;
-  }, {} as Record<T, boolean>);
+  return keys.reduce(
+    (acc, key) => {
+      acc[key] = false;
+      return acc;
+    },
+    {} as Record<T, boolean>,
+  );
 }

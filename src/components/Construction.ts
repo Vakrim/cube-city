@@ -13,7 +13,7 @@ export class Construction implements GameComponent {
 
   constructor(private game: Game) {}
 
-  update(deltaTime: number): void {
+  update(): void {
     const controls = this.game.getComponent(Controls);
 
     for (let i = 1; i <= this.placeableBlocksTypes.length; i++) {
@@ -29,11 +29,11 @@ export class Construction implements GameComponent {
   }
 
   getSampleBlock(blockType: BlockType): Block {
-    if(blockType === BlockType.WoodenSupport) {
+    if (blockType === BlockType.WoodenSupport) {
       return {
         type: BlockType.WoodenSupport,
         variant: 0,
-      }
+      };
     }
 
     return {

@@ -6,7 +6,7 @@ export function generatePilar(
   pz: number,
   radius: number,
   height: number,
-  gameMap: WorldMap
+  gameMap: WorldMap,
 ) {
   for (let x = -radius; x <= radius; x++) {
     for (let z = -radius; z <= radius; z++) {
@@ -18,7 +18,7 @@ export function generatePilar(
         for (let y = 0; y < thisHeight; y++) {
           gameMap.setBlock(
             { x: px + x, y, z: pz + z },
-            { type: BlockType.Rock }
+            { type: BlockType.Rock },
           );
         }
       }
