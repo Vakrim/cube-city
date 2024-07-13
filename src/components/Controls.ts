@@ -1,10 +1,24 @@
-import {
-  Camera, Object3D,
-  Raycaster,
-  Scene,
-  Vector2
-} from "three";
+import { Camera, Object3D, Raycaster, Scene, Vector2 } from "three";
 import { Game } from "../Game";
+
+const trackableKeys = [
+  "w",
+  "a",
+  "s",
+  "d",
+  "leftMouseButton",
+  "rightMouseButton",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "0",
+] as const;
 
 export class Controls {
   rayCaster = new Raycaster();
@@ -13,26 +27,11 @@ export class Controls {
   pointer: Vector2 = new Vector2(0, 0);
   wheelPosition = 0;
 
-  keyPressed: Record<
-    "w" | "a" | "s" | "d" | "leftMouseButton" | "rightMouseButton",
-    boolean
-  > = {
-    w: false,
-    a: false,
-    s: false,
-    d: false,
-    leftMouseButton: false,
-    rightMouseButton: false,
-  };
+  keyPressed: Record<(typeof trackableKeys)[number], boolean> =
+    createRecordFromKeys(trackableKeys);
 
-  keyPressedThisFrame: typeof Controls.prototype.keyPressed = {
-    w: false,
-    a: false,
-    s: false,
-    d: false,
-    leftMouseButton: false,
-    rightMouseButton: false,
-  };
+  keyPressedThisFrame: typeof Controls.prototype.keyPressed =
+    createRecordFromKeys(trackableKeys);
 
   constructor(private game: Game) {
     this.scene = game.getComponent(Scene);
@@ -106,4 +105,13 @@ export class Controls {
     this.rayCaster.setFromCamera(coords, this.game.getComponent(Camera));
     return this.rayCaster.intersectObjects(objects, false);
   }
+}
+
+function createRecordFromKeys<T extends string>(
+  keys: readonly T[]
+): Record<T, boolean> {
+  return keys.reduce((acc, key) => {
+    acc[key] = false;
+    return acc;
+  }, {} as Record<T, boolean>);
 }

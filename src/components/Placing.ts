@@ -4,15 +4,22 @@ import { BlockMesh, WorldMapRenderer } from "./WorldMapRenderer";
 import { Controls } from "./Controls";
 import { Game } from "../Game";
 import { WorldMap } from "./WorldMap";
+import { Construction } from "./Construction";
+import { Reactive, reactive } from "../helpers/reactive";
 
 export class Placing {
-  helperBox: BlockMesh | null = null;
+  helperBox: Reactive<BlockMesh, Parameters<typeof this.createHelperBlock>> =
+    reactive(
+      (params) => this.createHelperBlock(params),
+      (result) => this.scene.add(result),
+      (result) => this.scene.remove(result)
+    );
   private worldMapRenderer: WorldMapRenderer;
   private controls: Controls;
   private scene: Scene;
   private worldMap: WorldMap;
 
-  constructor(game: Game) {
+  constructor(private game: Game) {
     this.worldMap = game.getComponent(WorldMap);
     this.worldMapRenderer = game.getComponent(WorldMapRenderer);
     this.controls = game.getComponent(Controls);
@@ -21,20 +28,19 @@ export class Placing {
 
   init() {}
 
-  createHelperBlock() {
-    const helperBox = this.worldMapRenderer.createMesh({
-      type: BlockType.WoodenSupport,
-      variant: 0,
-    });
+  createHelperBlock(blockType: BlockType) {
+    const sampleBlock = this.game
+      .getComponent(Construction)
+      .getSampleBlock(blockType);
+
+    const helperBox = this.worldMapRenderer.createMesh(sampleBlock);
     helperBox.material = helperBox.material.clone();
 
     helperBox.material.opacity = 0.5;
-    helperBox.material.color.set(0x75e6da);
+    helperBox.material.transparent = true;
 
     helperBox.castShadow = false;
     helperBox.receiveShadow = false;
-
-    this.scene.add(helperBox);
 
     return helperBox;
   }
@@ -45,28 +51,28 @@ export class Placing {
     );
 
     if (intersects.length > 0) {
-      this.helperBox ??= this.createHelperBlock();
+      const helperBox = this.helperBox(
+        this.game.getComponent(Construction).activeBlockType
+      );
 
       const intersect = intersects[0];
 
       if (intersect.face) {
-        this.helperBox.position
+        helperBox.position
           .copy(intersect.point)
           .add(intersect.face.normal.clone().multiplyScalar(0.5))
           .round();
 
+        const sampleBlock = this.game
+          .getComponent(Construction)
+          .getSampleBlock(this.game.getComponent(Construction).activeBlockType);
+
         if (this.controls.keyPressedThisFrame.leftMouseButton) {
-          this.worldMap.setBlock(this.helperBox.position, {
-            type: BlockType.WoodenSupport,
-            variant: 0,
-          });
+          this.worldMap.setBlock(helperBox.position, sampleBlock);
         }
       }
     } else {
-      if (this.helperBox) {
-        this.scene.remove(this.helperBox);
-        this.helperBox = null;
-      }
+      this.helperBox.destroy();
     }
   }
 }

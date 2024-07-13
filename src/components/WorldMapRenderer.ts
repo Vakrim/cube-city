@@ -63,13 +63,13 @@ const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
     return mesh;
   },
   [BlockType.House]: () => {
-    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    const mesh = new Mesh(unitBoxGeometry, houseMaterial);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     return mesh;
   },
   [BlockType.Lumberjack]: () => {
-    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    const mesh = new Mesh(unitBoxGeometry, LumberjackMaterial);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     return mesh;
@@ -81,6 +81,13 @@ const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
     return mesh;
   },
 };
+
+
+const houseMaterial = woodMaterial.clone();
+houseMaterial.color.set(0xe06666);
+
+const LumberjackMaterial = woodMaterial.clone();
+LumberjackMaterial.color.set(0xbf9000);
 
 export type BlockMesh = Mesh<
   BufferGeometry,

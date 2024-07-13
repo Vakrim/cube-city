@@ -11,6 +11,7 @@ import { Placing } from "./components/Placing";
 import { Game } from "./Game";
 import { Camera, Scene } from "three";
 import { GUI } from "dat.gui";
+import { Construction } from "./components/Construction";
 
 function main() {
   const game = new Game();
@@ -28,6 +29,8 @@ function main() {
   game.createComponent(WorldMap);
 
   game.createComponent(Placing);
+
+  game.createComponent(Construction);
 
   generatePilar(15, 18, 3, 10, game.getComponent(WorldMap));
 
