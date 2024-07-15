@@ -1,31 +1,29 @@
 import { Block, BlockType } from "../Block";
 import { Game, GameComponent } from "../Game";
 import { Controls } from "./Controls";
-import { ReactStore } from "../menu/ReactStore";
+import { ReactStore } from "../toolbar/ReactStore";
 
 export class Construction implements GameComponent {
-  placeableBlocksTypes: BlockType[] = [
-    BlockType.WoodenSupport,
-    BlockType.House,
-    BlockType.Lumberjack,
-    BlockType.Sawmill,
-  ];
-  activeBlockType: BlockType = this.placeableBlocksTypes[0];
 
-  reactStore = new ReactStore();
+  activeBlockType: BlockType = placeableBlocksTypes[0];
+
+  reactStore = new ReactStore(() => ({
+    activeBlockType: this.activeBlockType,
+  }));
 
   constructor(private game: Game) {}
 
   update(): void {
     const controls = this.game.getComponent(Controls);
 
-    for (let i = 1; i <= this.placeableBlocksTypes.length; i++) {
+    for (let i = 1; i <= placeableBlocksTypes.length; i++) {
       if (
         controls.keyPressedThisFrame[
           i as unknown as keyof Controls["keyPressedThisFrame"]
         ]
       ) {
-        this.activeBlockType = this.placeableBlocksTypes[i];
+        this.activeBlockType = placeableBlocksTypes[i - 1];
+        this.reactStore.notify();
         break;
       }
     }
@@ -44,3 +42,10 @@ export class Construction implements GameComponent {
     };
   }
 }
+
+export const placeableBlocksTypes: BlockType[] = [
+  BlockType.WoodenSupport,
+  BlockType.House,
+  BlockType.Lumberjack,
+  BlockType.Sawmill,
+];

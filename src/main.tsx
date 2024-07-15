@@ -12,7 +12,7 @@ import { Game } from "./Game";
 import { Camera, Scene } from "three";
 import { GUI } from "dat.gui";
 import { Construction } from "./components/Construction";
-import { MenuRenderer } from "./components/MenuRenderer";
+import { Toolbar } from "./components/Toolbar";
 
 function main() {
   const game = new Game();
@@ -33,7 +33,7 @@ function main() {
 
   game.createComponent(Construction);
 
-  game.createComponent(MenuRenderer);
+  game.createComponent(Toolbar);
 
   generatePilar(15, 18, 3, 10, game.getComponent(WorldMap));
 
