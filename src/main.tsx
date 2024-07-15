@@ -12,9 +12,7 @@ import { Game } from "./Game";
 import { Camera, Scene } from "three";
 import { GUI } from "dat.gui";
 import { Construction } from "./components/Construction";
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { App } from "./App";
+import { MenuRenderer } from "./components/MenuRenderer";
 
 function main() {
   const game = new Game();
@@ -34,6 +32,8 @@ function main() {
   game.createComponent(Placing);
 
   game.createComponent(Construction);
+
+  game.createComponent(MenuRenderer);
 
   generatePilar(15, 18, 3, 10, game.getComponent(WorldMap));
 
@@ -71,12 +71,6 @@ function main() {
   window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-
-  ReactDOM.createRoot(document.getElementById("gui")!).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-  );
 }
 
 main();

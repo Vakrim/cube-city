@@ -11,6 +11,7 @@ export interface GameComponentConstructor<
 }
 
 interface AnyClass<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any[]): T;
 }
 
@@ -26,9 +27,10 @@ export class Game {
     this.components.set(componentConstructor, new componentConstructor(this));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addComponentInstance<T extends { new (...args: any[]): InstanceType<T> }>(
     constructor: T,
-    instance: InstanceType<T>,
+    instance: InstanceType<T>
   ) {
     if (this.components.has(constructor)) {
       throw new Error(`Component ${constructor.name} already added`);

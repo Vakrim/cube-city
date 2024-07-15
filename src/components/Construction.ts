@@ -1,6 +1,7 @@
 import { Block, BlockType } from "../Block";
 import { Game, GameComponent } from "../Game";
 import { Controls } from "./Controls";
+import { ReactStore } from "../menu/ReactStore";
 
 export class Construction implements GameComponent {
   placeableBlocksTypes: BlockType[] = [
@@ -10,6 +11,8 @@ export class Construction implements GameComponent {
     BlockType.Sawmill,
   ];
   activeBlockType: BlockType = this.placeableBlocksTypes[0];
+
+  reactStore = new ReactStore();
 
   constructor(private game: Game) {}
 
