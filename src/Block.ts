@@ -37,3 +37,11 @@ export type Block =
   | HouseBlock
   | LumberjackBlock
   | SawmillBlock;
+
+export const blockNames: Record<BlockType, string> = {
+  [BlockType.Rock]: "Rock",
+  [BlockType.WoodenSupport]: "Wooden Support",
+  [BlockType.House]: "House",
+  [BlockType.Lumberjack]: "Lumberjack",
+  [BlockType.Sawmill]: "Sawmill",
+};

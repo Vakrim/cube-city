@@ -9,6 +9,10 @@ export class Construction implements GameComponent {
 
   reactStore = new ReactStore(() => ({
     activeBlockType: this.activeBlockType,
+    setActiveType: (type: BlockType) => {
+      this.activeBlockType = type;
+      this.reactStore.notify();
+    }
   }));
 
   constructor(private game: Game) {}

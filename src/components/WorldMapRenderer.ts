@@ -12,6 +12,7 @@ import { rockMaterial } from "../materials/rockMaterial";
 import { Game, GameComponent } from "../Game";
 import { World } from "./World";
 import { woodMaterial } from "../materials/woodMaterial";
+import { woodSupportMaterials } from "../materials/woodenSupportMaterial";
 
 export class WorldMapRenderer implements GameComponent {
   private meshMap = new Map<Block, Mesh>();
@@ -57,7 +58,7 @@ const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
     return mesh;
   },
   [BlockType.WoodenSupport]: () => {
-    const mesh = new Mesh(unitBoxGeometry, woodMaterial);
+    const mesh = new Mesh(unitBoxGeometry, woodSupportMaterials);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     return mesh;
@@ -90,5 +91,5 @@ LumberjackMaterial.color.set(0xbf9000);
 
 export type BlockMesh = Mesh<
   BufferGeometry,
-  MeshBasicMaterial | MeshLambertMaterial
+  MeshBasicMaterial | MeshLambertMaterial | MeshLambertMaterial[]
 >;

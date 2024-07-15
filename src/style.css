@@ -20,5 +20,29 @@ body {
 #gui {
   position: fixed;
   bottom: 10px;
-  left: 10px;
+  left: 0px;
+}
+
+.construction-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.construction-list-item {
+  cursor: pointer;
+  background-color: #222;
+  padding: 5px 10px 5px 20px;
+  border-radius: 0 5px 5px 0;
+  position: relative;
+  left: -10px;
+
+  transition: all 0.2s ease-out;
+
+  &:hover {
+    left: 0;
+    background-color: #333;
+  }
 }

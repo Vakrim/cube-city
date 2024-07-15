@@ -1,3 +1,4 @@
+import { blockNames } from "../Block";
 import { Construction, placeableBlocksTypes } from "../components/Construction";
 import { useGameComponent } from "./useGameComponent";
 
@@ -5,16 +6,18 @@ export const Menu = () => {
   const construction = useGameComponent(Construction);
 
   return (
-    <div>
+    <div className="construction-list">
       {placeableBlocksTypes.map((blockType) => (
         <div
+          key={blockType}
+          className="construction-list-item"
           style={{
             fontWeight:
               construction.activeBlockType === blockType ? "bold" : "normal",
           }}
-          key={blockType}
+          onClick={() => construction.setActiveType(blockType)}
         >
-          {blockType}{" "}
+          {blockNames[blockType]}
         </div>
       ))}
     </div>
