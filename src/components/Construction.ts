@@ -4,16 +4,9 @@ import { Controls } from "./Controls";
 import { ReactStore } from "../toolbar/ReactStore";
 
 export class Construction implements GameComponent {
-
   activeBlockType: BlockType = placeableBlocksTypes[0];
 
-  reactStore = new ReactStore(() => ({
-    activeBlockType: this.activeBlockType,
-    setActiveType: (type: BlockType) => {
-      this.activeBlockType = type;
-      this.reactStore.notify();
-    }
-  }));
+  reactStore = new ReactStore(this);
 
   constructor(private game: Game) {}
 
@@ -26,8 +19,7 @@ export class Construction implements GameComponent {
           i as unknown as keyof Controls["keyPressedThisFrame"]
         ]
       ) {
-        this.activeBlockType = placeableBlocksTypes[i - 1];
-        this.reactStore.notify();
+        this.setActiveBlockType(placeableBlocksTypes[i - 1]);
         break;
       }
     }
@@ -44,6 +36,11 @@ export class Construction implements GameComponent {
     return {
       type: blockType,
     };
+  }
+
+  setActiveBlockType(blockType: BlockType): void {
+    this.activeBlockType = blockType;
+    this.reactStore.notify();
   }
 }
 

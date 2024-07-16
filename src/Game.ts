@@ -30,7 +30,7 @@ export class Game {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addComponentInstance<T extends { new (...args: any[]): InstanceType<T> }>(
     constructor: T,
-    instance: InstanceType<T>
+    instance: InstanceType<T>,
   ) {
     if (this.components.has(constructor)) {
       throw new Error(`Component ${constructor.name} already added`);

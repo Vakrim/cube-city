@@ -12,7 +12,7 @@ export class Placing {
     reactive(
       (params) => this.createHelperBlock(params),
       (result) => this.scene.add(result),
-      (result) => this.scene.remove(result)
+      (result) => this.scene.remove(result),
     );
   private worldMapRenderer: WorldMapRenderer;
   private controls: Controls;
@@ -48,12 +48,12 @@ export class Placing {
 
   update() {
     const intersects = this.controls.getIntersect(
-      this.worldMapRenderer.getAllMeshes()
+      this.worldMapRenderer.getAllMeshes(),
     );
 
     if (intersects.length > 0) {
       const helperBox = this.helperBox(
-        this.game.getComponent(Construction).activeBlockType
+        this.game.getComponent(Construction).activeBlockType,
       );
 
       const intersect = intersects[0];

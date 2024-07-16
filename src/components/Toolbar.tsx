@@ -13,7 +13,7 @@ export class Toolbar {
         <GameContext.Provider value={this.game}>
           <Menu />
         </GameContext.Provider>
-      </StrictMode>
+      </StrictMode>,
     );
   }
 }

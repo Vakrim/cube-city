@@ -3,7 +3,7 @@ import { ReactStore } from "./ReactStore";
 import { GameContext } from "./GameContext";
 
 export function useGameComponent<T>(
-  componentConstructor: ConstructorOrHasReactStore<T>
+  componentConstructor: ConstructorOrHasReactStore<T>,
 ) {
   const game = useContext(GameContext);
 
@@ -13,7 +13,9 @@ export function useGameComponent<T>(
 
   const component = game.getComponent(componentConstructor);
 
-  return useSyncExternalStore(component.reactStore.subscribe, () => component.reactStore.getSnapshot());
+  return useSyncExternalStore(component.reactStore.subscribe, () =>
+    component.reactStore.getSnapshot(),
+  ).component;
 }
 
 interface HasReactStore<T> {

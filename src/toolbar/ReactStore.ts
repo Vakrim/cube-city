@@ -1,9 +1,9 @@
 export class ReactStore<T> {
   private listeners: Listener[] = [];
-  snapshot: T;
+  snapshot: { component: T };
 
-  constructor(private snapshotFactory: () => T) {
-    this.snapshot = snapshotFactory();
+  constructor(private component: T) {
+    this.snapshot = { component };
   }
 
   subscribe = (onStoreChange: Listener): Listener => {
@@ -19,7 +19,7 @@ export class ReactStore<T> {
   }
 
   notify() {
-    this.snapshot = this.snapshotFactory();
+    this.snapshot = { component: this.component };
     this.listeners.forEach((listener) => listener());
   }
 }

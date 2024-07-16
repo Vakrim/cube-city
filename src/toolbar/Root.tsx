@@ -15,7 +15,7 @@ export const Menu = () => {
             fontWeight:
               construction.activeBlockType === blockType ? "bold" : "normal",
           }}
-          onClick={() => construction.setActiveType(blockType)}
+          onClick={() => construction.setActiveBlockType(blockType)}
         >
           {blockNames[blockType]}
         </div>
