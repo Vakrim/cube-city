@@ -1,28 +1,17 @@
-import { useContext, useSyncExternalStore } from "react";
-import { ReactStore } from "./ReactStore";
+import { useContext } from "react";
 import { GameContext } from "./GameContext";
 
-export function useGameComponent<T>(
-  componentConstructor: ConstructorOrHasReactStore<T>,
-) {
+export function useGameComponent<T>(componentConstructor: Constructor<T>) {
   const game = useContext(GameContext);
 
   if (!game) {
     throw new Error("Game not found");
   }
 
-  const component = game.getComponent(componentConstructor);
-
-  return useSyncExternalStore(component.reactStore.subscribe, () =>
-    component.reactStore.getSnapshot(),
-  ).component;
+  return game.getComponent(componentConstructor);
 }
 
-interface HasReactStore<T> {
-  reactStore: ReactStore<T>;
-}
-
-type ConstructorOrHasReactStore<T> = new (
+type Constructor<T> = new (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any[]
-) => HasReactStore<T>;
+) => T;

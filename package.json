@@ -9,10 +9,11 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write src",
     "preview": "vite preview",
-    "type-check" : "tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
+    "localforage": "^1.10.0",
     "lodash-es": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
