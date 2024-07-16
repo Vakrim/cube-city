@@ -1,4 +1,4 @@
-import { Scene } from "three";
+import { Material, Scene } from "three";
 import { BlockType } from "../Block";
 import { BlockMesh, WorldMapRenderer } from "./WorldMapRenderer";
 import { Controls } from "./Controls";
@@ -6,6 +6,7 @@ import { Game } from "../Game";
 import { WorldMap } from "./WorldMap";
 import { Construction } from "./Construction";
 import { Reactive, reactive } from "../helpers/reactive";
+import { memoize } from "lodash-es";
 
 export class Placing {
   helperBox: Reactive<BlockMesh, Parameters<typeof this.createHelperBlock>> =
@@ -34,14 +35,10 @@ export class Placing {
       .getSampleBlock(blockType);
 
     const helperBox = this.worldMapRenderer.createMesh(sampleBlock);
-    helperBox.material = Array.isArray(helperBox.material)
-      ? helperBox.material.map((m) => m.clone())
-      : helperBox.material.clone();
-
-    // helperBox.material.opacity = 0.5;
+    helperBox.material = getGhostMaterial(helperBox.material);
 
     helperBox.castShadow = false;
-    helperBox.receiveShadow = false;
+    helperBox.receiveShadow = true;
 
     return helperBox;
   }
@@ -76,4 +73,20 @@ export class Placing {
       this.helperBox.destroy();
     }
   }
+}
+
+const getGhostMaterial = memoize(
+  (material: Material | Material[]): Material | Material[] => {
+    return Array.isArray(material)
+      ? material.map((m) => getGhostSingleMaterial(m))
+      : getGhostSingleMaterial(material);
+  },
+);
+
+function getGhostSingleMaterial(material: Material) {
+  const ghostMaterial = material.clone();
+
+  ghostMaterial.opacity = 0.5;
+
+  return ghostMaterial;
 }

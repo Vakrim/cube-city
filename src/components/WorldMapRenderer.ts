@@ -1,11 +1,4 @@
-import {
-  BoxGeometry,
-  BufferGeometry,
-  Mesh,
-  MeshBasicMaterial,
-  MeshLambertMaterial,
-  Vector3,
-} from "three";
+import { BoxGeometry, BufferGeometry, Material, Mesh, Vector3 } from "three";
 import { Block, BlockType } from "../Block";
 import { Position } from "../Position";
 import { rockMaterial } from "../materials/rockMaterial";
@@ -89,7 +82,4 @@ houseMaterial.color.set(0xe06666);
 const LumberjackMaterial = woodMaterial.clone();
 LumberjackMaterial.color.set(0xbf9000);
 
-export type BlockMesh = Mesh<
-  BufferGeometry,
-  MeshBasicMaterial | MeshLambertMaterial | MeshLambertMaterial[]
->;
+export type BlockMesh = Mesh<BufferGeometry, Material | Material[]>;
