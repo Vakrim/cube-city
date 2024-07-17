@@ -16,10 +16,10 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "esModuleInterop": true,
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
