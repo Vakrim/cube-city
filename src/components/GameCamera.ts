@@ -1,9 +1,9 @@
 import { Camera, PerspectiveCamera, Vector2, Vector3 } from "three";
 import { screen } from "../screen";
-import { WORLD_MAP_SIZE } from "./WorldMap";
 import { clamp } from "../helpers/clamp";
 import { Game } from "../Game";
 import { Controls } from "./Controls";
+import { Config } from "../Config";
 
 const DEG2RAD = Math.PI / 180.0;
 
@@ -26,19 +26,27 @@ export class GameCamera {
   lastPointer = new Vector2(0, 0);
   lastWheelPosition = 0;
 
-  cameraOrigin = new Vector3(WORLD_MAP_SIZE / 2, 0, WORLD_MAP_SIZE / 2);
+  cameraOrigin: Vector3;
   cameraRadius = 50;
   cameraAzimuth = 30;
   cameraElevation = 30;
 
   controls: Controls;
 
-  constructor(game: Game) {
+  private worldMapSize = this.game.get(Config).WORLD_MAP_SIZE;
+
+  constructor(private game: Game) {
+    this.cameraOrigin = new Vector3(
+      this.worldMapSize / 2,
+      0,
+      this.worldMapSize / 2,
+    );
+
     this.camera = new PerspectiveCamera(75, screen.aspectRatio, 0.1, 1000);
 
     game.addComponentInstance(Camera, this.camera);
 
-    this.controls = game.getComponent(Controls);
+    this.controls = game.get(Controls);
 
     this.updateCameraPosition();
   }
@@ -100,8 +108,8 @@ export class GameCamera {
       left.multiplyScalar(PAN_SENSITIVITY * scrollRight * deltaTime),
     );
 
-    this.cameraOrigin.x = clamp(this.cameraOrigin.x, 0, WORLD_MAP_SIZE);
-    this.cameraOrigin.z = clamp(this.cameraOrigin.z, 0, WORLD_MAP_SIZE);
+    this.cameraOrigin.x = clamp(this.cameraOrigin.x, 0, this.worldMapSize);
+    this.cameraOrigin.z = clamp(this.cameraOrigin.z, 0, this.worldMapSize);
 
     this.cameraRadius = clamp(
       this.cameraRadius + wheelDelta * ZOOM_SENSITIVITY,

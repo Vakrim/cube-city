@@ -10,7 +10,8 @@
     "format": "prettier --write src",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "verify": "yarn type-check && yarn lint && yarn test && yarn format"
   },
   "dependencies": {
     "dat.gui": "^0.7.9",

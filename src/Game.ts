@@ -16,36 +16,54 @@ interface AnyClass<T> {
 }
 
 export class Game {
-  components = new Map<unknown, GameComponent>();
-  instances = new Map<unknown, unknown>();
+  components = new Map<string, GameComponent>();
+  instances = new Map<string, unknown>();
 
-  createComponent(componentConstructor: GameComponentConstructor) {
-    if (this.components.has(componentConstructor)) {
-      throw new Error(`Component ${componentConstructor.name} already added`);
+  createComponent<T extends GameComponent>(
+    componentConstructor: GameComponentConstructor<T>,
+    name?: string,
+  ): T {
+    const componentName = name ?? componentConstructor.name;
+
+    if (this.components.has(componentName)) {
+      throw new Error(`Component "${componentName}" already added`);
     }
 
-    this.components.set(componentConstructor, new componentConstructor(this));
+    const component = new componentConstructor(this);
+
+    this.components.set(componentName, component);
+
+    return component;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addComponentInstance<T extends { new (...args: any[]): InstanceType<T> }>(
-    constructor: T,
+    constructorOrName: T | string,
     instance: InstanceType<T>,
   ) {
-    if (this.components.has(constructor)) {
-      throw new Error(`Component ${constructor.name} already added`);
+    const componentName =
+      typeof constructorOrName === "string"
+        ? constructorOrName
+        : constructorOrName.name;
+
+    if (this.components.has(componentName)) {
+      throw new Error(`Component "${componentName}" already added`);
     }
 
-    this.instances.set(constructor, instance);
+    this.instances.set(componentName, instance);
   }
 
-  getComponent<T>(componentConstructor: AnyClass<T>) {
+  get<T>(componentConstructor: AnyClass<T> | string): T {
+    const componentName =
+      typeof componentConstructor === "string"
+        ? componentConstructor
+        : componentConstructor.name;
+
     const component =
-      this.components.get(componentConstructor) ??
-      this.instances.get(componentConstructor);
+      this.components.get(componentName) ?? this.instances.get(componentName);
 
     if (!component) {
-      throw new Error(`Component ${componentConstructor.name} not found`);
+      throw new Error(`Component "${componentName}" not found`);
     }
 
     return component as T;

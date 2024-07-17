@@ -4,29 +4,29 @@ import { database } from "../Database";
 import { Game, GameComponent } from "../Game";
 import { Position } from "../Position";
 import { WorldMapRenderer } from "./WorldMapRenderer";
-
-export const WORLD_MAP_SIZE = 64;
+import { Config } from "../Config";
 
 export class WorldMap implements GameComponent {
-  map: (Block | null)[] = Array(WORLD_MAP_SIZE ** 3).fill(null);
+  worldMapSize = this.game.get(Config).WORLD_MAP_SIZE;
+  map: (Block | null)[] = Array(this.worldMapSize ** 3).fill(null);
   render: WorldMapRenderer;
 
-  constructor(game: Game) {
-    this.render = game.getComponent(WorldMapRenderer);
+  constructor(private game: Game) {
+    this.render = game.get(WorldMapRenderer);
   }
 
   init() {
     this.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
     this.setBlock(
-      { x: WORLD_MAP_SIZE - 1, y: 0, z: 0 },
+      { x: this.worldMapSize - 1, y: 0, z: 0 },
       { type: BlockType.Rock },
     );
     this.setBlock(
-      { x: 0, y: 0, z: WORLD_MAP_SIZE - 1 },
+      { x: 0, y: 0, z: this.worldMapSize - 1 },
       { type: BlockType.Rock },
     );
     this.setBlock(
-      { x: WORLD_MAP_SIZE - 1, y: 0, z: WORLD_MAP_SIZE - 1 },
+      { x: this.worldMapSize - 1, y: 0, z: this.worldMapSize - 1 },
       { type: BlockType.Rock },
     );
   }
@@ -65,20 +65,31 @@ export class WorldMap implements GameComponent {
     }
   }
 
-  private getIndex(position: Position) {
+  getIndex(position: Position) {
     return (
       position.x +
-      position.y * WORLD_MAP_SIZE +
-      position.z * WORLD_MAP_SIZE ** 2
+      position.y * this.worldMapSize +
+      position.z * this.worldMapSize ** 2
     );
   }
 
-  private getPosition(index: number) {
-    const x = index % WORLD_MAP_SIZE;
-    const y = Math.floor(index / WORLD_MAP_SIZE) % WORLD_MAP_SIZE;
-    const z = Math.floor(index / WORLD_MAP_SIZE ** 2);
+  getPosition(index: number) {
+    const x = index % this.worldMapSize;
+    const y = Math.floor(index / this.worldMapSize) % this.worldMapSize;
+    const z = Math.floor(index / this.worldMapSize ** 2);
 
     return new Vector3(x, y, z);
+  }
+
+  isInBounds(position: Position) {
+    return (
+      position.x >= 0 &&
+      position.y >= 0 &&
+      position.z >= 0 &&
+      position.x < this.worldMapSize &&
+      position.y < this.worldMapSize &&
+      position.z < this.worldMapSize
+    );
   }
 
   async save() {

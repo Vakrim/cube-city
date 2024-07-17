@@ -8,7 +8,7 @@ export function useGameComponent<T>(componentConstructor: Constructor<T>) {
     throw new Error("Game not found");
   }
 
-  return game.getComponent(componentConstructor);
+  return game.get(componentConstructor);
 }
 
 type Constructor<T> = new (

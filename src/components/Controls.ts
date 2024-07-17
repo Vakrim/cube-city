@@ -34,7 +34,7 @@ export class Controls {
     createRecordFromKeys(trackableKeys);
 
   constructor(private game: Game) {
-    this.scene = game.getComponent(Scene);
+    this.scene = game.get(Scene);
   }
 
   init() {
@@ -102,7 +102,7 @@ export class Controls {
       -(this.pointer.y / window.innerHeight) * 2 + 1,
     );
 
-    this.rayCaster.setFromCamera(coords, this.game.getComponent(Camera));
+    this.rayCaster.setFromCamera(coords, this.game.get(Camera));
     return this.rayCaster.intersectObjects(objects, false);
   }
 }

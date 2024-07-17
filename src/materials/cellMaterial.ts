@@ -1,13 +1,12 @@
 import { RepeatWrapping, NearestFilter, MeshLambertMaterial } from "three";
 import cellTexturePath from "../assets/cell.png";
 import { textureLoader } from "./loader";
-import { WORLD_MAP_SIZE } from "../components/WorldMap";
 
 const cellTexture = textureLoader.load(cellTexturePath);
 
 cellTexture.wrapS = RepeatWrapping;
 cellTexture.wrapT = RepeatWrapping;
-cellTexture.repeat.set(WORLD_MAP_SIZE, WORLD_MAP_SIZE);
+cellTexture.repeat.set(64, 64);
 
 cellTexture.magFilter = NearestFilter;
 

@@ -20,14 +20,14 @@ export class WorldMapRenderer implements GameComponent {
 
     mesh.position.add(new Vector3(position.x, position.y, position.z));
 
-    this.game.getComponent(World).scene.add(mesh);
+    this.game.get(World).scene.add(mesh);
   }
 
   removeBlock(block: Block) {
     const mesh = this.meshMap.get(block);
 
     if (mesh) {
-      this.game.getComponent(World).scene.remove(mesh);
+      this.game.get(World).scene.remove(mesh);
       this.meshMap.delete(block);
     }
   }

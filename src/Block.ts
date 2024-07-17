@@ -16,7 +16,6 @@ interface RockBlock extends BaseBlock {
 
 interface WoodenSupportBlock extends BaseBlock {
   type: BlockType.WoodenSupport;
-  variant: number;
 }
 
 interface HouseBlock extends BaseBlock {

@@ -21,18 +21,16 @@ export class Placing {
   private worldMap: WorldMap;
 
   constructor(private game: Game) {
-    this.worldMap = game.getComponent(WorldMap);
-    this.worldMapRenderer = game.getComponent(WorldMapRenderer);
-    this.controls = game.getComponent(Controls);
-    this.scene = game.getComponent(Scene);
+    this.worldMap = game.get(WorldMap);
+    this.worldMapRenderer = game.get(WorldMapRenderer);
+    this.controls = game.get(Controls);
+    this.scene = game.get(Scene);
   }
 
   init() {}
 
   createHelperBlock(blockType: BlockType) {
-    const sampleBlock = this.game
-      .getComponent(Construction)
-      .getSampleBlock(blockType);
+    const sampleBlock = this.game.get(Construction).getSampleBlock(blockType);
 
     const helperBox = this.worldMapRenderer.createMesh(sampleBlock);
     helperBox.material = getGhostMaterial(helperBox.material);
@@ -50,7 +48,7 @@ export class Placing {
 
     if (intersects.length > 0) {
       const helperBox = this.helperBox(
-        this.game.getComponent(Construction).activeBlockType,
+        this.game.get(Construction).activeBlockType,
       );
 
       const intersect = intersects[0];
@@ -62,8 +60,8 @@ export class Placing {
           .round();
 
         const sampleBlock = this.game
-          .getComponent(Construction)
-          .getSampleBlock(this.game.getComponent(Construction).activeBlockType);
+          .get(Construction)
+          .getSampleBlock(this.game.get(Construction).activeBlockType);
 
         if (this.controls.keyPressedThisFrame.leftMouseButton) {
           this.worldMap.setBlock(helperBox.position, sampleBlock);

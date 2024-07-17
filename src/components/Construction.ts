@@ -11,7 +11,7 @@ export class Construction implements GameComponent {
   constructor(private game: Game) {}
 
   update(): void {
-    const controls = this.game.getComponent(Controls);
+    const controls = this.game.get(Controls);
 
     for (let i = 1; i <= placeableBlocksTypes.length; i++) {
       if (
@@ -29,7 +29,6 @@ export class Construction implements GameComponent {
     if (blockType === BlockType.WoodenSupport) {
       return {
         type: BlockType.WoodenSupport,
-        variant: 0,
       };
     }
 

@@ -13,9 +13,12 @@ import { Camera, Scene } from "three";
 import { GUI } from "dat.gui";
 import { Construction } from "./components/Construction";
 import { Toolbar } from "./components/Toolbar";
+import { Config } from "./Config";
 
 function main() {
   const game = new Game();
+
+  game.addComponentInstance(Config, new Config());
 
   game.addComponentInstance(GUI, new GUI());
 
@@ -35,10 +38,10 @@ function main() {
 
   game.createComponent(Toolbar);
 
-  generatePilar(15, 18, 3, 10, game.getComponent(WorldMap));
+  generatePilar(15, 18, 3, 10, game.get(WorldMap));
 
-  generatePilar(32, 32, 4, 16, game.getComponent(WorldMap));
-  generatePilar(36, 32, 8, 4, game.getComponent(WorldMap));
+  generatePilar(32, 32, 4, 16, game.get(WorldMap));
+  generatePilar(36, 32, 8, 4, game.get(WorldMap));
 
   const stats = new Stats();
   stats.showPanel(0);
@@ -48,8 +51,8 @@ function main() {
 
   game.init();
 
-  const scene = game.getComponent(Scene);
-  const camera = game.getComponent(Camera);
+  const scene = game.get(Scene);
+  const camera = game.get(Camera);
 
   function render(time?: number) {
     stats.begin();
