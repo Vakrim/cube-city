@@ -14,6 +14,7 @@ import { GUI } from "dat.gui";
 import { Construction } from "./components/Construction";
 import { Toolbar } from "./components/Toolbar";
 import { Config } from "./Config";
+import { LoadBearing } from "./components/LoadBearing";
 
 function main() {
   const game = new Game();
@@ -33,6 +34,8 @@ function main() {
   game.createComponent(WorldMap);
 
   game.createComponent(Placing);
+
+  game.createComponent(LoadBearing);
 
   game.createComponent(Construction);
 

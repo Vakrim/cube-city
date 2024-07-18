@@ -5,6 +5,7 @@ import { Game, GameComponent } from "../Game";
 import { Position } from "../Position";
 import { WorldMapRenderer } from "./WorldMapRenderer";
 import { Config } from "../Config";
+import { LoadBearing } from "./LoadBearing";
 
 export class WorldMap implements GameComponent {
   worldMapSize = this.game.get(Config).WORLD_MAP_SIZE;
@@ -42,11 +43,8 @@ export class WorldMap implements GameComponent {
 
     this.map[index] = block;
     this.render.addBlock(position, block);
-  }
 
-  setBlockByIndex(index: number, block: Block) {
-    const position = this.getPosition(index);
-    this.setBlock(position, block);
+    this.game.get(LoadBearing).dirty = true;
   }
 
   getBlock(position: Position) {
@@ -62,6 +60,8 @@ export class WorldMap implements GameComponent {
     if (block) {
       this.render.removeBlock(block);
       this.map[index] = null;
+
+      this.game.get(LoadBearing).dirty = true;
     }
   }
 

@@ -7,6 +7,7 @@ import { WorldMap } from "./WorldMap";
 import { Construction } from "./Construction";
 import { Reactive, reactive } from "../helpers/reactive";
 import { memoize } from "lodash-es";
+import { LoadBearing } from "./LoadBearing";
 
 export class Placing {
   helperBox: Reactive<BlockMesh, Parameters<typeof this.createHelperBlock>> =
@@ -59,12 +60,24 @@ export class Placing {
           .add(intersect.face.normal.clone().multiplyScalar(0.5))
           .round();
 
-        const sampleBlock = this.game
+        const activeBlockType = this.game.get(Construction).activeBlockType;
+
+        const canBePlaced = this.game
+          .get(LoadBearing)
+          .canBlockBePlaced(helperBox.position, activeBlockType);
+
+        if (!canBePlaced) {
+          // TODO we can refactor this code to not create box just to destroy it here
+          this.helperBox.destroy();
+          return;
+        }
+
+        const blockToBePlaced = this.game
           .get(Construction)
-          .getSampleBlock(this.game.get(Construction).activeBlockType);
+          .getSampleBlock(activeBlockType);
 
         if (this.controls.keyPressedThisFrame.leftMouseButton) {
-          this.worldMap.setBlock(helperBox.position, sampleBlock);
+          this.worldMap.setBlock(helperBox.position, blockToBePlaced);
         }
       }
     } else {

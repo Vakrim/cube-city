@@ -18,6 +18,8 @@ describe(LoadBearing, () => {
 
     const worldMap = game.createComponent(WorldMap);
 
+    const loadBearing = game.createComponent(LoadBearing);
+
     worldMap.setBlock({ x: 1, y: 0, z: 1 }, { type: BlockType.Rock });
     worldMap.setBlock({ x: 1, y: 1, z: 1 }, { type: BlockType.Rock });
     worldMap.setBlock({ x: 1, y: 2, z: 1 }, { type: BlockType.Rock });
@@ -33,8 +35,6 @@ describe(LoadBearing, () => {
     worldMap.setBlock({ x: 4, y: 2, z: 1 }, { type: BlockType.WoodenSupport });
     worldMap.setBlock({ x: 5, y: 2, z: 1 }, { type: BlockType.WoodenSupport });
     worldMap.setBlock({ x: 2, y: 1, z: 1 }, { type: BlockType.WoodenSupport });
-
-    const loadBearing = new LoadBearing(game);
 
     loadBearing.calculateSupport();
 

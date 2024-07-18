@@ -4,17 +4,20 @@ import { Position } from "../Position";
 import { assertPresent } from "../helpers/assertPresent";
 import { WorldMap } from "./WorldMap";
 
-interface Load {
-  horizontal: number;
-  vertical: number;
-}
-
 export class LoadBearing {
   worldMap: WorldMap;
   load: (Load | null)[] = [];
 
+  dirty: boolean = true;
+
   constructor(private game: Game) {
     this.worldMap = game.get(WorldMap);
+  }
+
+  update(): void {
+    if (this.dirty) {
+      this.calculateSupport();
+    }
   }
 
   calculateSupport(): void {
@@ -24,19 +27,20 @@ export class LoadBearing {
 
     for (let x = 0; x < this.worldMap.worldMapSize; x++) {
       for (let z = 0; z < this.worldMap.worldMapSize; z++) {
-        if (this.worldMap.getBlock({ x, y: 0, z })?.type === BlockType.Rock) {
-          this.load[this.worldMap.getIndex({ x, y: 0, z })] = {
-            horizontal: 0,
-            vertical: Infinity,
-          };
-
-          openSet.add(this.worldMap.getIndex({ x, y: 0, z }));
+        if (this.worldMap.getBlock({ x, y: 0, z })?.type !== BlockType.Rock) {
+          continue;
         }
+
+        this.load[this.worldMap.getIndex({ x, y: 0, z })] = {
+          horizontal: 0,
+          vertical: Infinity,
+        };
+
+        openSet.add(this.worldMap.getIndex({ x, y: 0, z }));
       }
     }
 
-    while (openSet.size > 0) {
-      const blockIndex = openSet.values().next().value as number;
+    for (const blockIndex of openSet) {
       openSet.delete(blockIndex);
 
       const p = this.worldMap.getPosition(blockIndex);
@@ -78,6 +82,8 @@ export class LoadBearing {
         openSet,
       );
     }
+
+    this.dirty = false;
   }
 
   passHorizontalLoadCapacity(
@@ -141,6 +147,46 @@ export class LoadBearing {
 
     openSet.add(this.worldMap.getIndex(p));
   }
+
+  getLoadCapacity(p: Position): Load | null {
+    return this.load[this.worldMap.getIndex(p)];
+  }
+
+  getTotalLoadCapacity(p: Position): number | null {
+    const load = this.getLoadCapacity(p);
+    if (!load) {
+      return null;
+    }
+    return load.horizontal + load.vertical;
+  }
+
+  canBePlacedNextTo(p: Position): boolean {
+    const totalCapacity = this.getTotalLoadCapacity(p);
+
+    return totalCapacity !== null && totalCapacity >= 1;
+  }
+
+  canBlockBePlaced(p: Position, blockType: BlockType): boolean {
+    if (!this.worldMap.isInBounds(p)) {
+      return false;
+    }
+
+    if (this.getTotalLoadCapacity({ x: p.x, y: p.y - 1, z: p.z }) !== null) {
+      return true;
+    }
+
+    if (
+      blockMaxHorizontalLoadCapacity[blockType] > 0 &&
+      (this.canBePlacedNextTo({ x: p.x - 1, y: p.y, z: p.z }) ||
+        this.canBePlacedNextTo({ x: p.x + 1, y: p.y, z: p.z }) ||
+        this.canBePlacedNextTo({ x: p.x, y: p.y, z: p.z - 1 }) ||
+        this.canBePlacedNextTo({ x: p.x, y: p.y, z: p.z + 1 }))
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 }
 
 const blockMaxHorizontalLoadCapacity: Record<BlockType, number> = {
@@ -150,3 +196,8 @@ const blockMaxHorizontalLoadCapacity: Record<BlockType, number> = {
   [BlockType.Lumberjack]: 0,
   [BlockType.Sawmill]: 0,
 };
+
+interface Load {
+  horizontal: number;
+  vertical: number;
+}
