@@ -1,29 +1,36 @@
 import { BlockType } from "../Block";
 import { Game } from "../Game";
 import { Position } from "../Position";
+import { assertPresent } from "../helpers/assertPresent";
 import { WorldMap } from "./WorldMap";
+
+interface Load {
+  horizontal: number;
+  vertical: number;
+}
 
 export class LoadBearing {
   worldMap: WorldMap;
-  load: (number | null)[] = [];
+  load: (Load | null)[] = [];
 
   constructor(private game: Game) {
     this.worldMap = game.get(WorldMap);
   }
 
   calculateSupport(): void {
-    this.load = Array<number | null>(this.worldMap.map.length).fill(null);
+    this.load = Array<Load | null>(this.worldMap.map.length).fill(null);
 
     const openSet = new Set<number>();
 
     for (let x = 0; x < this.worldMap.worldMapSize; x++) {
-      for (let y = 0; y < this.worldMap.worldMapSize; y++) {
-        for (let z = 0; z < this.worldMap.worldMapSize; z++) {
-          if (this.worldMap.getBlock({ x, y, z })?.type === BlockType.Rock) {
-            this.load[this.worldMap.getIndex({ x, y, z })] =
-              blockMaxHorizontalLoadCapacity[BlockType.Rock];
-            openSet.add(this.worldMap.getIndex({ x, y, z }));
-          }
+      for (let z = 0; z < this.worldMap.worldMapSize; z++) {
+        if (this.worldMap.getBlock({ x, y: 0, z })?.type === BlockType.Rock) {
+          this.load[this.worldMap.getIndex({ x, y: 0, z })] = {
+            horizontal: 0,
+            vertical: Infinity,
+          };
+
+          openSet.add(this.worldMap.getIndex({ x, y: 0, z }));
         }
       }
     }
@@ -34,24 +41,40 @@ export class LoadBearing {
 
       const p = this.worldMap.getPosition(blockIndex);
 
+      const currentBlockLoad = this.load[blockIndex];
+
+      assertPresent(currentBlockLoad);
+
+      const currentBlockLoadSum =
+        currentBlockLoad.horizontal + currentBlockLoad.vertical;
+
+      this.passLoadCapacityUpward(
+        {
+          ...p,
+          y: p.y + 1,
+        },
+        currentBlockLoadSum,
+        openSet,
+      );
+
       this.passHorizontalLoadCapacity(
         { ...p, x: p.x - 1 },
-        this.load[blockIndex]! - 1,
+        currentBlockLoadSum - 1,
         openSet,
       );
       this.passHorizontalLoadCapacity(
         { ...p, x: p.x + 1 },
-        this.load[blockIndex]! - 1,
+        currentBlockLoadSum - 1,
         openSet,
       );
       this.passHorizontalLoadCapacity(
         { ...p, z: p.z - 1 },
-        this.load[blockIndex]! - 1,
+        currentBlockLoadSum - 1,
         openSet,
       );
       this.passHorizontalLoadCapacity(
         { ...p, z: p.z + 1 },
-        this.load[blockIndex]! - 1,
+        currentBlockLoadSum - 1,
         openSet,
       );
     }
@@ -66,33 +89,62 @@ export class LoadBearing {
       return;
     }
 
-    const loadAtP = this.load[this.worldMap.getIndex(p)];
+    const block = this.worldMap.getBlock(p);
+
+    if (!block) {
+      return;
+    }
+
+    const blockMaxLoad = blockMaxHorizontalLoadCapacity[block.type];
+
+    const newLoad = Math.min(maxProvidedLoadCapacity, blockMaxLoad);
+
+    const currentLoad = this.load[this.worldMap.getIndex(p)];
 
     // this block already can handle more load than we are providing
-    if (loadAtP !== null && loadAtP >= maxProvidedLoadCapacity) {
+    if (currentLoad !== null && currentLoad.horizontal >= newLoad) {
       return;
     }
 
-    const blockType = this.worldMap.getBlock(p)?.type;
+    this.load[this.worldMap.getIndex(p)] ??= { horizontal: 0, vertical: 0 };
+    this.load[this.worldMap.getIndex(p)]!.horizontal = newLoad;
 
-    // there is no block here
-    if (!blockType) {
+    openSet.add(this.worldMap.getIndex(p));
+  }
+
+  passLoadCapacityUpward(
+    p: Position,
+    maxProvidedLoadCapacity: number,
+    openSet: Set<number>,
+  ): void {
+    if (!this.worldMap.isInBounds(p)) {
       return;
     }
 
-    const blockMaxLoad = blockMaxHorizontalLoadCapacity[blockType];
+    const block = this.worldMap.getBlock(p);
 
-    this.load[this.worldMap.getIndex(p)] = Math.min(
-      maxProvidedLoadCapacity,
-      blockMaxLoad,
-    );
+    if (!block) {
+      return;
+    }
+
+    const newLoad = maxProvidedLoadCapacity;
+
+    const currentLoad = this.load[this.worldMap.getIndex(p)];
+
+    // this block already can handle more load than we are providing
+    if (currentLoad !== null && currentLoad.vertical >= newLoad) {
+      return;
+    }
+
+    this.load[this.worldMap.getIndex(p)] ??= { horizontal: 0, vertical: 0 };
+    this.load[this.worldMap.getIndex(p)]!.vertical = newLoad;
 
     openSet.add(this.worldMap.getIndex(p));
   }
 }
 
 const blockMaxHorizontalLoadCapacity: Record<BlockType, number> = {
-  [BlockType.Rock]: 100,
+  [BlockType.Rock]: 0,
   [BlockType.WoodenSupport]: 2,
   [BlockType.House]: 0,
   [BlockType.Lumberjack]: 0,

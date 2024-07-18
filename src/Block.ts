@@ -1,5 +1,5 @@
 export enum BlockType {
-  Rock,
+  Rock = 1,
   WoodenSupport,
   House,
   Lumberjack,
