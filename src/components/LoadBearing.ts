@@ -1,14 +1,18 @@
+import { BoxGeometry, Mesh, Scene } from "three";
 import { BlockType } from "../Block";
 import { Game } from "../Game";
 import { Position } from "../Position";
 import { assertPresent } from "../helpers/assertPresent";
 import { WorldMap } from "./WorldMap";
+import { numberMaterials } from "../materials/numberMaterial";
 
 export class LoadBearing {
   worldMap: WorldMap;
   load: (Load | null)[] = [];
 
   dirty: boolean = true;
+
+  meshes: Mesh[] = [];
 
   constructor(private game: Game) {
     this.worldMap = game.get(WorldMap);
@@ -17,6 +21,38 @@ export class LoadBearing {
   update(): void {
     if (this.dirty) {
       this.calculateSupport();
+    }
+  }
+
+  updateMeshes(): void {
+    const scene = this.game.get(Scene);
+
+    for (const mesh of this.meshes) {
+      scene.remove(mesh);
+    }
+
+    this.meshes = [];
+
+    for (let x = 0; x < this.worldMap.worldMapSize; x++) {
+      for (let y = 0; y < this.worldMap.worldMapSize; y++) {
+        for (let z = 0; z < this.worldMap.worldMapSize; z++) {
+          const load = this.getTotalLoadCapacity({ x, y, z });
+
+          if (load === null) {
+            continue;
+          }
+
+          const mesh = new Mesh(
+            unitBoxGeometry,
+            numberMaterials[Math.min(9, load)],
+          );
+
+          mesh.position.set(x, y, z);
+
+          scene.add(mesh);
+          this.meshes.push(mesh);
+        }
+      }
     }
   }
 
@@ -84,6 +120,8 @@ export class LoadBearing {
     }
 
     this.dirty = false;
+
+    this.updateMeshes();
   }
 
   passHorizontalLoadCapacity(
@@ -188,6 +226,8 @@ export class LoadBearing {
     return false;
   }
 }
+
+const unitBoxGeometry = new BoxGeometry(1.1, 1.1, 1.1);
 
 const blockMaxHorizontalLoadCapacity: Record<BlockType, number> = {
   [BlockType.Rock]: 0,
