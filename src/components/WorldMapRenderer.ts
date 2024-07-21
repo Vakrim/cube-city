@@ -5,7 +5,8 @@ import { rockMaterial } from "../materials/rockMaterial";
 import { Game, GameComponent } from "../Game";
 import { World } from "./World";
 import { woodMaterial } from "../materials/woodMaterial";
-import { woodSupportMaterials } from "../materials/woodenSupportMaterial";
+import { AssetsPack } from "../AssetsPack";
+import { invisibleMaterial } from "../materials/invisibleMaterial";
 
 export class WorldMapRenderer implements GameComponent {
   private meshMap = new Map<Block, Mesh>();
@@ -33,7 +34,7 @@ export class WorldMapRenderer implements GameComponent {
   }
 
   createMesh(block: Block) {
-    return meshFactory[block.type](block);
+    return meshFactory[block.type](block, this.game.get(AssetsPack));
   }
 
   getAllMeshes() {
@@ -43,17 +44,30 @@ export class WorldMapRenderer implements GameComponent {
 
 const unitBoxGeometry = new BoxGeometry(1, 1, 1);
 
-const meshFactory: Record<BlockType, (block: Block) => BlockMesh> = {
+const meshFactory: Record<
+  BlockType,
+  (block: Block, assetPack: AssetsPack) => BlockMesh
+> = {
   [BlockType.Rock]: () => {
     const mesh = new Mesh(unitBoxGeometry, rockMaterial);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     return mesh;
   },
-  [BlockType.WoodenSupport]: () => {
-    const mesh = new Mesh(unitBoxGeometry, woodSupportMaterials);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+  [BlockType.WoodenSupport]: (block, assetsPack) => {
+    const model = new Mesh(
+      assetsPack.models.woodenSupport.geometry,
+      assetsPack.models.woodenSupport.material,
+    );
+    model.scale.set(10 / 16, 10 / 16, 10 / 16);
+
+    model.castShadow = true;
+    model.receiveShadow = true;
+
+    const mesh = new Mesh(unitBoxGeometry, invisibleMaterial);
+
+    mesh.add(model);
+
     return mesh;
   },
   [BlockType.House]: () => {

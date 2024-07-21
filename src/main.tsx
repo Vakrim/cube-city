@@ -15,9 +15,15 @@ import { Construction } from "./components/Construction";
 import { Toolbar } from "./components/Toolbar";
 import { Config } from "./Config";
 import { LoadBearing } from "./components/LoadBearing";
+import { assetsManager } from "./AssetsManager";
+import { AssetsPack } from "./AssetsPack";
 
-function main() {
+async function main() {
+  const assetsPack = await assetsManager.load();
+
   const game = new Game();
+
+  game.addComponentInstance(AssetsPack, assetsPack);
 
   game.addComponentInstance(Config, new Config());
 
@@ -79,4 +85,4 @@ function main() {
   });
 }
 
-main();
+main().catch(console.error);
