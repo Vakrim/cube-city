@@ -1,6 +1,7 @@
 export const assetsDefinition = {
   models: {
     woodenSupport: "wooden-support",
+    woodenStairs: "wooden-stairs",
   },
 };
 

@@ -192,6 +192,7 @@ export class LoadBearing {
 const blockMaxHorizontalLoadCapacity: Record<BlockType, number> = {
   [BlockType.Rock]: 0,
   [BlockType.WoodenSupport]: 2,
+  [BlockType.WoodenStairs]: 0,
   [BlockType.House]: 0,
   [BlockType.Lumberjack]: 0,
   [BlockType.Sawmill]: 0,

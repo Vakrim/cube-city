@@ -45,6 +45,7 @@ export class Construction implements GameComponent {
 
 export const placeableBlocksTypes: BlockType[] = [
   BlockType.WoodenSupport,
+  BlockType.WoodenStairs,
   BlockType.House,
   BlockType.Lumberjack,
   BlockType.Sawmill,

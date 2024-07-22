@@ -70,6 +70,22 @@ const meshFactory: Record<
 
     return mesh;
   },
+  [BlockType.WoodenStairs]: (block, assetsPack) => {
+    const model = new Mesh(
+      assetsPack.models.woodenStairs.geometry,
+      assetsPack.models.woodenStairs.material,
+    );
+    model.scale.set(10 / 16, 10 / 16, 10 / 16);
+
+    model.castShadow = true;
+    model.receiveShadow = true;
+
+    const mesh = new Mesh(unitBoxGeometry, invisibleMaterial);
+
+    mesh.add(model);
+
+    return mesh;
+  },
   [BlockType.House]: () => {
     const mesh = new Mesh(unitBoxGeometry, houseMaterial);
     mesh.castShadow = true;

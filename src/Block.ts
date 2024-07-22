@@ -1,6 +1,7 @@
 export enum BlockType {
   Rock = 1,
   WoodenSupport,
+  WoodenStairs,
   House,
   Lumberjack,
   Sawmill,
@@ -18,6 +19,10 @@ interface WoodenSupportBlock extends BaseBlock {
   type: BlockType.WoodenSupport;
 }
 
+interface WoodenStairsBlock extends BaseBlock {
+  type: BlockType.WoodenStairs;
+}
+
 interface HouseBlock extends BaseBlock {
   type: BlockType.House;
 }
@@ -33,6 +38,7 @@ interface SawmillBlock extends BaseBlock {
 export type Block =
   | RockBlock
   | WoodenSupportBlock
+  | WoodenStairsBlock
   | HouseBlock
   | LumberjackBlock
   | SawmillBlock;
@@ -40,6 +46,7 @@ export type Block =
 export const blockNames: Record<BlockType, string> = {
   [BlockType.Rock]: "Rock",
   [BlockType.WoodenSupport]: "Wooden Support",
+  [BlockType.WoodenStairs]: "Wooden Stairs",
   [BlockType.House]: "House",
   [BlockType.Lumberjack]: "Lumberjack",
   [BlockType.Sawmill]: "Sawmill",
