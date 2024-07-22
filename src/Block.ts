@@ -7,6 +7,13 @@ export enum BlockType {
   Sawmill,
 }
 
+export enum Orientation {
+  PositiveX = 1,
+  PositiveZ,
+  NegativeX,
+  NegativeZ,
+}
+
 interface BaseBlock {
   type: BlockType;
 }
@@ -21,6 +28,7 @@ interface WoodenSupportBlock extends BaseBlock {
 
 interface WoodenStairsBlock extends BaseBlock {
   type: BlockType.WoodenStairs;
+  orientation: Orientation;
 }
 
 interface HouseBlock extends BaseBlock {

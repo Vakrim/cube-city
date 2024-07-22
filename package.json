@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write src",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -p tsconfig.app.json --noEmit",
     "test": "jest",
     "verify": "yarn type-check && yarn lint && yarn test && yarn format"
   },

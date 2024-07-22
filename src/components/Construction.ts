@@ -1,4 +1,4 @@
-import { Block, BlockType } from "../Block";
+import { Block, BlockType, Orientation } from "../Block";
 import { Game, GameComponent } from "../Game";
 import { Controls } from "./Controls";
 import { ReactStore } from "../toolbar/ReactStore";
@@ -26,9 +26,10 @@ export class Construction implements GameComponent {
   }
 
   getSampleBlock(blockType: BlockType): Block {
-    if (blockType === BlockType.WoodenSupport) {
+    if (blockType === BlockType.WoodenStairs) {
       return {
-        type: BlockType.WoodenSupport,
+        type: BlockType.WoodenStairs,
+        orientation: Orientation.PositiveX,
       };
     }
 
