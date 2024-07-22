@@ -8,11 +8,12 @@ import { Construction } from "./Construction";
 import { Reactive, reactive } from "../helpers/reactive";
 import { memoize } from "lodash-es";
 import { LoadBearing } from "./LoadBearing";
+import { invisibleMaterial } from "../materials/invisibleMaterial";
 
 export class Placing {
   helperBox: Reactive<BlockMesh, Parameters<typeof this.createHelperBlock>> =
     reactive(
-      (params) => this.createHelperBlock(params),
+      (...params) => this.createHelperBlock(...params),
       (result) => this.scene.add(result),
       (result) => this.scene.remove(result),
     );
@@ -30,11 +31,16 @@ export class Placing {
 
   init() {}
 
-  createHelperBlock(blockType: BlockType) {
+  createHelperBlock(blockType: BlockType, valid: boolean) {
     const sampleBlock = this.game.get(Construction).getSampleBlock(blockType);
 
     const helperBox = this.worldMapRenderer.createMesh(sampleBlock);
-    helperBox.material = getGhostMaterial(helperBox.material);
+
+    console.log(valid);
+
+    helperBox.material = valid
+      ? getGhostMaterial(helperBox.material)
+      : invisibleMaterial;
 
     helperBox.castShadow = false;
     helperBox.receiveShadow = true;
@@ -43,46 +49,47 @@ export class Placing {
   }
 
   update() {
+    const placingPosition = this.getPlacingPosition();
+    const activeBlockType = this.game.get(Construction).activeBlockType;
+    const canBePlaced =
+      placingPosition !== null &&
+      this.game
+        .get(LoadBearing)
+        .canBlockBePlaced(placingPosition, activeBlockType);
+
+    if (placingPosition) {
+      const helperBox = this.helperBox(activeBlockType, canBePlaced);
+      helperBox.position.copy(placingPosition);
+    } else {
+      this.helperBox.destroy();
+    }
+
+    if (canBePlaced && this.controls.keyPressedThisFrame.leftMouseButton) {
+      const blockToBePlaced = this.game
+        .get(Construction)
+        .getSampleBlock(activeBlockType);
+
+      this.worldMap.setBlock(placingPosition, blockToBePlaced);
+    }
+  }
+
+  private getPlacingPosition() {
     const intersects = this.controls.getIntersect(
       this.worldMapRenderer.getAllMeshes(),
     );
 
     if (intersects.length > 0) {
-      const helperBox = this.helperBox(
-        this.game.get(Construction).activeBlockType,
-      );
-
       const intersect = intersects[0];
 
       if (intersect.face) {
-        helperBox.position
-          .copy(intersect.point)
+        return intersect.point
+          .clone()
           .add(intersect.face.normal.clone().multiplyScalar(0.5))
           .round();
-
-        const activeBlockType = this.game.get(Construction).activeBlockType;
-
-        const canBePlaced = this.game
-          .get(LoadBearing)
-          .canBlockBePlaced(helperBox.position, activeBlockType);
-
-        if (!canBePlaced) {
-          // TODO we can refactor this code to not create box just to destroy it here
-          this.helperBox.destroy();
-          return;
-        }
-
-        const blockToBePlaced = this.game
-          .get(Construction)
-          .getSampleBlock(activeBlockType);
-
-        if (this.controls.keyPressedThisFrame.leftMouseButton) {
-          this.worldMap.setBlock(helperBox.position, blockToBePlaced);
-        }
       }
-    } else {
-      this.helperBox.destroy();
     }
+
+    return null;
   }
 }
 
