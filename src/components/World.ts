@@ -61,7 +61,7 @@ export class World implements GameComponent {
 
     this.scene.add(sunLight);
 
-    const ambientLight = new AmbientLight(0xffffff, 0.5);
+    const ambientLight = new AmbientLight(0xffffff, 0.8);
     this.scene.add(ambientLight);
   }
 

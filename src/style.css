@@ -61,6 +61,42 @@ body {
   border-radius: 5px;
   margin-right: 10px;
 
+  transition: all 0.1s ease-out;
+
+  &:hover {
+    background-color: #333;
+    outline: 3px solid #6fca3a;
+  }
+}
+
+.save-and-load-item-dropdown {
+  cursor: pointer;
+  padding: 5px 10px 5px 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.save-and-load-item-dropdown-wrapper {
+  position: absolute;
+  bottom: 100%;
+  background-color: #222;
+  border-radius: 5px 5px 0 0;
+
+  transition: all 0.05s ease-out;
+
+  transform-origin: bottom;
+  transform: scaleY(0);
+}
+
+.save-and-load-item-dropdown:hover .save-and-load-item-dropdown-wrapper {
+  transform: scaleY(1);
+}
+
+.save-and-load-item-dropdown-option {
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+
   transition: all 0.2s ease-out;
 
   &:hover {

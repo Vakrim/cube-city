@@ -122,36 +122,48 @@ export class WorldMap implements GameComponent {
     });
   }
 
-  async loadBonkers() {
-    const map = await database.getItem<(Block | null)[]>("worldMap");
-    if (!map) {
-      return;
+  async saveToFile(fileName: string) {
+    const jsonString = JSON.stringify(this.map);
+
+    const readableStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(jsonString));
+        controller.close();
+      },
+    });
+
+    const compressionStream = new CompressionStream("gzip");
+
+    const compressedStream = readableStream.pipeThrough(compressionStream);
+
+    const compressedBlob = await new Response(compressedStream).blob();
+
+    const url = URL.createObjectURL(compressedBlob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${fileName}.json.gz`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  async loadFromFile(levelName: string) {
+    const response = await fetch(`/saves/${levelName}.json.gz`);
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
+
+    const map = (await new Response(response.body).json()) as (Block | null)[];
 
     this.clear();
 
-    const bonkers: {
-      block: Block;
-      position: Vector3;
-    }[] = [];
-
     map.forEach((block, index) => {
       if (block) {
-        bonkers.push({ block, position: this.getPosition(index) });
+        this.setBlock(this.getPosition(index), block);
       }
     });
-
-    bonkers.sort(
-      (a, b) =>
-        a.position.x +
-        a.position.y +
-        a.position.z -
-        (b.position.x + b.position.y + b.position.z),
-    );
-
-    for (const { block, position } of bonkers) {
-      await new Promise((resolve) => setTimeout(resolve, 5));
-      this.setBlock(position, block);
-    }
   }
 }
