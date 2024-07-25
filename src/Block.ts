@@ -18,28 +18,29 @@ interface BaseBlock {
   type: BlockType;
 }
 
-interface RockBlock extends BaseBlock {
+export interface RockBlock extends BaseBlock {
   type: BlockType.Rock;
 }
 
-interface WoodenSupportBlock extends BaseBlock {
+export interface WoodenSupportBlock extends BaseBlock {
   type: BlockType.WoodenSupport;
 }
 
-interface WoodenStairsBlock extends BaseBlock {
+export interface WoodenStairsBlock extends BaseBlock {
   type: BlockType.WoodenStairs;
   orientation: Orientation;
 }
 
-interface HouseBlock extends BaseBlock {
+export interface HouseBlock extends BaseBlock {
   type: BlockType.House;
+  occupantIds: number[];
 }
 
-interface LumberjackBlock extends BaseBlock {
+export interface LumberjackBlock extends BaseBlock {
   type: BlockType.Lumberjack;
 }
 
-interface SawmillBlock extends BaseBlock {
+export interface SawmillBlock extends BaseBlock {
   type: BlockType.Sawmill;
 }
 
@@ -59,3 +60,5 @@ export const blockNames: Record<BlockType, string> = {
   [BlockType.Lumberjack]: "Lumberjack",
   [BlockType.Sawmill]: "Sawmill",
 };
+
+export type BlockOfType<T extends BlockType> = Extract<Block, { type: T }>;

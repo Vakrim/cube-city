@@ -38,6 +38,13 @@ export class Construction implements GameComponent {
       };
     }
 
+    if (blockType === BlockType.House) {
+      return {
+        type: BlockType.House,
+        occupantIds: [],
+      };
+    }
+
     return {
       type: blockType,
     };

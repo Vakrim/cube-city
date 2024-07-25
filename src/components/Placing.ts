@@ -1,5 +1,5 @@
 import { Mesh, Scene } from "three";
-import { BlockType, Orientation } from "../Block";
+import { BlockType } from "../Block";
 import { BlockMesh, WorldMapRenderer } from "./WorldMapRenderer";
 import { Controls } from "./Controls";
 import { Game } from "../Game";
@@ -30,11 +30,7 @@ export class Placing {
 
   init() {}
 
-  createHelperBlock(
-    blockType: BlockType,
-    activeRotation: Orientation,
-    valid: boolean,
-  ) {
+  createHelperBlock(blockType: BlockType, valid: boolean) {
     const sampleBlock = this.game
       .get(Construction)
       .createActiveBlock(blockType);
@@ -60,7 +56,6 @@ export class Placing {
   update() {
     const placingPosition = this.getPlacingPosition();
     const activeBlockType = this.game.get(Construction).activeBlockType;
-    const activeRotation = this.game.get(Construction).activeRotation;
     const canBePlaced =
       placingPosition !== null &&
       this.game
@@ -68,11 +63,7 @@ export class Placing {
         .canBlockBePlaced(placingPosition, activeBlockType);
 
     if (placingPosition) {
-      const helperBox = this.helperBox(
-        activeBlockType,
-        activeRotation,
-        canBePlaced,
-      );
+      const helperBox = this.helperBox(activeBlockType, canBePlaced);
       helperBox.position.copy(placingPosition);
     } else {
       this.helperBox.destroy();

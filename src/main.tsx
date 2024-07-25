@@ -17,6 +17,7 @@ import { LoadBearing } from "./components/LoadBearing";
 import { assetsManager } from "./AssetsManager";
 import { AssetsPack } from "./AssetsPack";
 import { Renderer } from "./components/Renderer";
+import { Agency } from "./components/Agency";
 
 async function main() {
   const assetsPack = await assetsManager.load();
@@ -40,6 +41,8 @@ async function main() {
   game.createComponent(WorldMapRenderer);
 
   game.createComponent(WorldMap);
+
+  game.createComponent(Agency);
 
   game.createComponent(Placing);
 

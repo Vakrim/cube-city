@@ -1,11 +1,12 @@
 import { Vector3 } from "three";
-import { Block, BlockType } from "../Block";
+import { Block, BlockOfType, BlockType } from "../Block";
 import { database } from "../Database";
 import { Game, GameComponent } from "../Game";
 import { Position } from "../Position";
 import { WorldMapRenderer } from "./WorldMapRenderer";
 import { Config } from "../Config";
 import { LoadBearing } from "./LoadBearing";
+import { Construction } from "./Construction";
 
 export class WorldMap implements GameComponent {
   worldMapSize = this.game.get(Config).WORLD_MAP_SIZE;
@@ -16,21 +17,7 @@ export class WorldMap implements GameComponent {
     this.render = game.get(WorldMapRenderer);
   }
 
-  init() {
-    this.setBlock({ x: 0, y: 0, z: 0 }, { type: BlockType.Rock });
-    this.setBlock(
-      { x: this.worldMapSize - 1, y: 0, z: 0 },
-      { type: BlockType.Rock },
-    );
-    this.setBlock(
-      { x: 0, y: 0, z: this.worldMapSize - 1 },
-      { type: BlockType.Rock },
-    );
-    this.setBlock(
-      { x: this.worldMapSize - 1, y: 0, z: this.worldMapSize - 1 },
-      { type: BlockType.Rock },
-    );
-  }
+  init() {}
 
   setBlock(position: Position, block: Block) {
     const index = this.getIndex(position);
@@ -90,6 +77,24 @@ export class WorldMap implements GameComponent {
       position.y < this.worldMapSize &&
       position.z < this.worldMapSize
     );
+  }
+
+  filterBlock<T extends BlockType>(
+    type: T,
+    predicate: (block: BlockOfType<T>) => boolean,
+  ): { block: BlockOfType<T>; position: Position }[] {
+    const result: { block: BlockOfType<T>; position: Position }[] = [];
+
+    this.map.forEach((block, index) => {
+      if (block?.type === type && predicate(block as BlockOfType<T>)) {
+        result.push({
+          block: block as BlockOfType<T>,
+          position: this.getPosition(index),
+        });
+      }
+    });
+
+    return result;
   }
 
   async save() {
@@ -162,7 +167,9 @@ export class WorldMap implements GameComponent {
 
     map.forEach((block, index) => {
       if (block) {
-        this.setBlock(this.getPosition(index), block);
+        const b = this.game.get(Construction).createActiveBlock(block.type);
+
+        this.setBlock(this.getPosition(index), { ...b, ...block });
       }
     });
   }

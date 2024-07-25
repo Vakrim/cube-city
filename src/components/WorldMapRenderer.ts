@@ -1,5 +1,5 @@
 import { BoxGeometry, BufferGeometry, Material, Mesh, Vector3 } from "three";
-import { Block, BlockType } from "../Block";
+import { Block, BlockOfType, BlockType } from "../Block";
 import { Position } from "../Position";
 import { rockMaterial } from "../materials/rockMaterial";
 import { Game, GameComponent } from "../Game";
@@ -47,7 +47,7 @@ const unitBoxGeometry = new BoxGeometry(1, 1, 1);
 
 type BlockMeshFactory = {
   [BT in BlockType]: (
-    block: Extract<Block, { type: BT }>,
+    block: BlockOfType<BT>,
     assetPack: AssetsPack,
   ) => BlockMesh;
 };
