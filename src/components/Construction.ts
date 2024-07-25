@@ -5,6 +5,7 @@ import { ReactStore } from "../toolbar/ReactStore";
 
 export class Construction implements GameComponent {
   activeBlockType: BlockType = placeableBlocksTypes[0];
+  activeRotation: Orientation = Orientation.PositiveX;
 
   reactStore = new ReactStore(this);
 
@@ -23,13 +24,17 @@ export class Construction implements GameComponent {
         break;
       }
     }
+
+    if (controls.keyPressedThisFrame.r) {
+      this.activeRotation = (this.activeRotation + 1) % 4;
+    }
   }
 
-  getSampleBlock(blockType: BlockType): Block {
+  createActiveBlock(blockType: BlockType): Block {
     if (blockType === BlockType.WoodenStairs) {
       return {
         type: BlockType.WoodenStairs,
-        orientation: Orientation.PositiveX,
+        orientation: this.activeRotation,
       };
     }
 

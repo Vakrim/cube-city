@@ -1,5 +1,5 @@
 export enum BlockType {
-  Rock = 1,
+  Rock = 0,
   WoodenSupport,
   WoodenStairs,
   House,
@@ -8,10 +8,10 @@ export enum BlockType {
 }
 
 export enum Orientation {
-  PositiveX = 1,
-  PositiveZ,
-  NegativeX,
+  PositiveX = 0,
   NegativeZ,
+  NegativeX,
+  PositiveZ,
 }
 
 interface BaseBlock {

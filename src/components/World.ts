@@ -1,5 +1,6 @@
 import {
   AmbientLight,
+  AxesHelper,
   DirectionalLight,
   Mesh,
   PlaneGeometry,
@@ -19,6 +20,10 @@ export class World implements GameComponent {
   init(): void {
     this.createFloor();
     this.createLight();
+
+    const axesHelper = new AxesHelper(5);
+    axesHelper.position.y = 5;
+    this.scene.add(axesHelper);
   }
 
   createFloor() {

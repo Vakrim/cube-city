@@ -6,6 +6,7 @@ const trackableKeys = [
   "a",
   "s",
   "d",
+  "r",
   "leftMouseButton",
   "rightMouseButton",
   "1",

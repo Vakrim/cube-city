@@ -34,6 +34,7 @@ export class WorldMapRenderer implements GameComponent {
   }
 
   createMesh(block: Block) {
+    // @ts-expect-error TODO
     return meshFactory[block.type](block, this.game.get(AssetsPack));
   }
 
@@ -44,10 +45,14 @@ export class WorldMapRenderer implements GameComponent {
 
 const unitBoxGeometry = new BoxGeometry(1, 1, 1);
 
-const meshFactory: Record<
-  BlockType,
-  (block: Block, assetPack: AssetsPack) => BlockMesh
-> = {
+type BlockMeshFactory = {
+  [BT in BlockType]: (
+    block: Extract<Block, { type: BT }>,
+    assetPack: AssetsPack,
+  ) => BlockMesh;
+};
+
+const meshFactory: BlockMeshFactory = {
   [BlockType.Rock]: () => {
     const mesh = new Mesh(unitBoxGeometry, rockMaterial);
     mesh.castShadow = true;
@@ -79,6 +84,8 @@ const meshFactory: Record<
 
     model.castShadow = true;
     model.receiveShadow = true;
+
+    model.rotateY((Math.PI / 2) * block.orientation);
 
     const mesh = new Mesh(unitBoxGeometry, invisibleMaterial);
 
