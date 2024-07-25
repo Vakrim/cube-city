@@ -1,5 +1,4 @@
 import { Camera, PerspectiveCamera, Vector2, Vector3 } from "three";
-import { screen } from "../screen";
 import { clamp } from "../helpers/clamp";
 import { Game } from "../Game";
 import { Controls } from "./Controls";
@@ -42,7 +41,8 @@ export class GameCamera {
       this.worldMapSize / 2,
     );
 
-    this.camera = new PerspectiveCamera(75, screen.aspectRatio, 0.1, 1000);
+    const aspectRatio = 9 / 16;
+    this.camera = new PerspectiveCamera(75, aspectRatio, 0.1, 1000);
 
     game.addComponentInstance(Camera, this.camera);
 
@@ -123,8 +123,8 @@ export class GameCamera {
     this.lastWheelPosition = this.controls.wheelPosition;
   }
 
-  updateAspectRatio() {
-    this.camera.aspect = screen.aspectRatio;
+  updateAspectRatio(aspectRatio: number) {
+    this.camera.aspect = aspectRatio;
     this.camera.updateProjectionMatrix();
   }
 }

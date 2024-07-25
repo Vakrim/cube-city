@@ -1,5 +1,4 @@
 import "./style.css";
-import { renderer } from "./renderer";
 import { WorldMapRenderer } from "./components/WorldMapRenderer";
 import { WorldMap } from "./components/WorldMap";
 import { GameCamera } from "./components/GameCamera";
@@ -17,6 +16,7 @@ import { Config } from "./Config";
 import { LoadBearing } from "./components/LoadBearing";
 import { assetsManager } from "./AssetsManager";
 import { AssetsPack } from "./AssetsPack";
+import { Renderer } from "./components/Renderer";
 
 async function main() {
   const assetsPack = await assetsManager.load();
@@ -28,6 +28,8 @@ async function main() {
   game.addComponentInstance(Config, new Config());
 
   game.addComponentInstance(GUI, new GUI());
+
+  game.createComponent(Renderer);
 
   game.createComponent(World);
 
@@ -71,7 +73,7 @@ async function main() {
 
     game.update(deltaTime);
 
-    renderer.render(scene, camera);
+    game.get(Renderer).render(scene, camera);
 
     stats.end();
 
@@ -79,10 +81,6 @@ async function main() {
   }
 
   requestAnimationFrame(render);
-
-  window.addEventListener("resize", () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
 }
 
 main().catch(console.error);
