@@ -1,14 +1,12 @@
-import { ArrowHelper, Scene, Vector3 } from "three";
 import { Block, BlockType } from "../Block";
 import { Game, GameComponent } from "../Game";
 import { Position } from "../Position";
 import { WorldMap } from "./WorldMap";
+import { Actor } from "../Actor";
 
 export class Agency implements GameComponent {
   actors: Actor[] = [];
   nextActorId = 0;
-
-  actorMeshes: Map<Actor, ArrowHelper> = new Map();
 
   constructor(private game: Game) {}
 
@@ -30,6 +28,8 @@ export class Agency implements GameComponent {
       const actor = this.createActor(emptySpace);
       house.block.occupantIds.push(actor.id);
     });
+
+    this.actors.forEach((actor) => actor.update());
   }
 
   deleteActor(actor: Actor) {
@@ -40,33 +40,14 @@ export class Agency implements GameComponent {
     }
 
     this.actors.splice(index, 1);
-
-    const mesh = this.actorMeshes.get(actor);
-
-    if (!mesh) {
-      throw new Error("Mesh not found");
-    }
-
-    this.game.get(Scene).remove(mesh);
-    this.actorMeshes.delete(actor);
+    actor.dispose();
   }
 
   createActor(position: Position) {
-    const actor: Actor = {
-      id: this.nextActorId++,
-      position: new Vector3(position.x, position.y, position.z),
-    };
+    const actor = new Actor(this.nextActorId++, this.game);
+    actor.position.set(position.x, position.y, position.z);
 
     this.actors.push(actor);
-
-    console.log("Actor created", actor);
-
-    this.actorMeshes.set(
-      actor,
-      new ArrowHelper(new Vector3(0, 1, 0), actor.position, 1, 0xffff00),
-    );
-
-    this.game.get(Scene).add(this.actorMeshes.get(actor)!);
 
     return actor;
   }
@@ -84,11 +65,6 @@ export class Agency implements GameComponent {
       });
     }
   }
-}
-
-interface Actor {
-  id: number;
-  position: Vector3;
 }
 
 const adjacent = [
