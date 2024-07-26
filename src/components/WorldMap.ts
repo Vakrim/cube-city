@@ -7,6 +7,7 @@ import { WorldMapRenderer } from "./WorldMapRenderer";
 import { Config } from "../Config";
 import { LoadBearing } from "./LoadBearing";
 import { Construction } from "./Construction";
+import { Agency } from "./Agency";
 
 export class WorldMap implements GameComponent {
   worldMapSize = this.game.get(Config).WORLD_MAP_SIZE;
@@ -46,6 +47,8 @@ export class WorldMap implements GameComponent {
 
     if (block) {
       this.render.removeBlock(block);
+      this.game.get(Agency).onBlockRemoved(block);
+
       this.map[index] = null;
 
       this.game.get(LoadBearing).dirty = true;
@@ -105,6 +108,7 @@ export class WorldMap implements GameComponent {
     this.map.forEach((block) => {
       if (block) {
         this.render.removeBlock(block);
+        this.game.get(Agency).onBlockRemoved(block);
       }
     });
 
